@@ -17,7 +17,7 @@ int main(){
 
     else{
         for(int i = 0; i < n/2; i++){
-            arr[i] = 2 + 2*i
+            arr[i] = 2 + 2*i;
         }
         for(int i = 0; i < (n - n/2); i++){
             arr[i+n/2] = 1 + 2*i; 
