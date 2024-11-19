@@ -25,3 +25,4 @@ ____________
 ____________
 NO SOLUTION
 
+https://vjudge.net/problem/CSES-1070
