@@ -109,7 +109,14 @@ class ListDL:
             
             self.size -= 2
 
-
+def check_multidigit(expr, i):
+    number = str(expr[i])
+    while((i+1 < len(expr)) and expr[i+1].isnumeric()):
+        number += str(expr[i+1])
+        i += 1
+    return number
+    
+    
 
 
 def main():
@@ -120,23 +127,28 @@ def main():
     pilha_parenteses = pilha()
     pilha_operação = pilha()
 
-    for digit in expr:
-        if(digit.isnumeric()):
-            expr_pol.insert(str(digit))
+    i = 0
+    while i < len(expr):
+        if(expr[i].isnumeric()):
+            number = check_multidigit(expr, i)
+            expr_pol.insert(str(number))
+            i += len(number) - 1
 
-        elif(digit == "("):
+        elif(expr[i] == "("):
             parentese = Node_P()
             pilha_parenteses.inserir(parentese)
         
-        elif(digit in ops):
+        elif(expr[i] in ops):
             operação = Node_P()
-            operação.valor = digit
+            operação.valor = expr[i]
             pilha_operação.inserir(operação)
         else:
             pilha_parenteses.pop()
             if(pilha_operação.top):
                 op = (pilha_operação.pop()).valor
                 expr_pol.insert(str(op))
+        
+        i += 1
 
     node = expr_pol.header
     print("notação polonesa:", end=" ")
@@ -153,14 +165,3 @@ def main():
     print(expr_pol.header.next.val)
 
 main()
-    
-
-
-    
-
-    
-
-    
-
-
-    
