@@ -8,26 +8,26 @@ int main(){
     cin >> t;
 
     for(int k = 0; k < t; k++){
-        int n;
-        float d, h;
+        long long int n;
+        long double d, h;
         cin >> n >> d >> h;
-        float cotan = d/(2 * h);
+        long double cotan = d/(2 * h);
 
-        vector<float> heights;
+        vector<long double> heights;
         for(int i = 0; i<n; i++){
-            float y;
+            long double y;
             cin >> y;
             heights.push_back(y);
         }
 
         heights.push_back(heights.back() + 2*h); // garantir que não há nada acima da ultima branch
         
-        float sum = 0;
+        long double sum = 0;
         for(int i = 0; i < n; i++){
 
             int j = i + 1;
-            float base_menor = 0;
-            float altura = h;
+            long double base_menor = 0;
+            long double altura = h;
 
             if(heights[i] + h > heights[j]){
                 altura = (heights[j] - heights[i]);
@@ -35,7 +35,7 @@ int main(){
 
             }
             
-            float area = (base_menor * altura)/2 + (d * altura)/2;
+            long double area = (base_menor * altura)/2 + (d * altura)/2;
             sum += area;
         }
 

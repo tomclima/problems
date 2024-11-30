@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define int long long int
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -7,16 +8,16 @@ int main(){
     int t;
     cin >> t;
     for(int k = 0; k < t; k++){
-        long long int n, f, a, b;
+        int n, f, a, b;
         cin >> n >> f >> a >> b;
         bool possible = true;
 
         int last = 0;
         for(int i = 0; i < n; i++){
-            long long int time;
+            int time;
             cin >> time;
 
-            long long int delta = a * (time - last);
+            int delta = a * (time - last);
             if(b >= f and delta >= f){
                 possible = false;
             }

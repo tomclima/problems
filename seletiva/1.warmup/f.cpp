@@ -10,7 +10,7 @@ int main(){
     vector<int> arr;
 
     for(int i = 0; i < n; i++){
-        long long int num;
+        long long unsigned int num;
         cin >> num;
         arr.push_back(num);
     }
