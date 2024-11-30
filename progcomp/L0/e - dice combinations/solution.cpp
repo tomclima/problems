@@ -3,31 +3,33 @@ using namespace std;
 
 int main(){
     ios_base::sync_with_stdio(false);
-    int n;
-    cin >> n;
 
-    long long int answer = 1;
-    long long int modulo = pow(10, 9) + 7;
+        long long int n;
+        cin >> n;
+        long long int modulo = pow(10, 9) + 7;
+        long long int answer;
 
-    for(int i = 0; i < n -1; i++){
-        answer *= 2;
-        answer = answer % modulo;
-    }
+        vector<long long int> first_six = {1, 2, 4, 8, 16, 32};
+        deque<long long int> last_six;
+        long long int sum = 0;
 
-    long long int removals = 1;
-
-    if(n > 6){  
-        long long int power = 1;
-        for(int i = 1; i < n - 6; i++){
-            removals = (2*removals + power) % modulo;
-            power *= 2;
-            power = power % modulo;
+        for(int i = 0; i < 6; i++){
+            last_six.push_back(first_six[i]);
+            sum += first_six[i] % modulo;
+        }
+        
+        for(int i = 0; i < n - 6; i++){
+            last_six.push_back(sum);
+            sum = (2 * sum - last_six[0]) % modulo;
+            last_six.pop_front();
         }
 
-        answer -= removals;
-    }
-    cout << answer;
-
-
-
+        if(n < 6){
+            answer = first_six[n-1];
+        }
+        else{
+            answer = last_six.back();
+        }
+        
+        cout << answer % modulo;
 }
