@@ -2,13 +2,14 @@
 
 using namespace std;
 
-int binary_search(vector<int> arr, int key){
+int binary_search_right(vector<int> &arr, int key){ // pass by reference for speed
     int left = 0; 
-    int right = arr.size() -1;
-    int answer;
+    int right = arr.size() - 1;
+    int mid;
+    int answer = -1;
 
     while (left <= right){
-        int mid = left + (right - left)/2;
+        mid = left + (right - left)/2;
 
         if(arr[mid] <= key){
             left = mid + 1;
@@ -19,10 +20,16 @@ int binary_search(vector<int> arr, int key){
         }
     }
 
+    if(answer == -1){
+        answer = left + (right - left)/2;
+    }
+
     return answer;
 }
 
+
 int main(){
+    ios_base::sync_with_stdio(false);
     int n, h;
     cin >> n >> h;
     vector<int> high, low;
@@ -35,7 +42,7 @@ int main(){
             low.push_back(height);
         }
         else{
-            high.push_back(h - height + 1);
+            high.push_back(h - height);
         }
     }
     
@@ -49,8 +56,8 @@ int main(){
         int high_col;
         int total_col;
 
-        high_col = binary_search(high, i);
-        low_col = n/2 - binary_search(low, i);
+        high_col = binary_search_right(high, i);
+        low_col = n/2 - binary_search_right(low, i);
 
         total_col = low_col + high_col;
 
