@@ -1,12 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define endl '\n'
 
 int main(){
     ios_base::sync_with_stdio(false);
 
         long long int n;
         cin >> n;
-        long long int modulo = pow(10, 9) + 7;
+        long long int modulo = 1000000000 + 7;
         long long int answer;
 
         vector<long long int> first_six = {1, 2, 4, 8, 16, 32};
@@ -20,15 +21,16 @@ int main(){
         
         for(int i = 0; i < n - 6; i++){
             last_six.push_back(sum);
-            sum = (2 * sum - last_six[0]) % modulo;
+            sum += sum % modulo;
+            sum -= last_six[0] % modulo;
             last_six.pop_front();
         }
 
         if(n < 6){
-            answer = first_six[n-1];
+            answer = first_six[n-1] % modulo;
         }
         else{
-            answer = last_six.back();
+            answer = last_six.back() % modulo;
         }
         
         cout << answer % modulo;
