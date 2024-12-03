@@ -1,7 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define int long long int
 
+bool abc1(string s, map<int, int> n, map<int, int> p, int i){
+    return s[i] == 'A' and s[n[i]] == 'B' and s[n[n[i]]] == 'C';
+}
 
+bool abc2(string s, map<int, int> n, map<int, int> p, int i){
+    return s[p[i]] == 'A' and s[i] == 'B' and s[n[i]] == 'C';
+}
+
+bool abc3(string s, map<int, int> n, map<int, int> p, int i){
+    return s[p[p[i]]] == 'A' and s[p[i]] == 'B' and s[i] == 'C';
+}
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -10,31 +21,37 @@ int main(){
 
     int n = s.size();
 
-    map<int, int> jumps;
+    map<int, int> next;
     map<int, int> prev;
-    prev.insert(make_pair(0, 0));
-    for(int i = 0; i < n; i++){
-        jumps.insert(make_pair(i, i+1));
+    for(int i = -1; i < n; i++){
+        next.insert(make_pair(i, i+1));
         prev.insert(make_pair(i+1, i));
     }
+
     int i = 0;
     while(i + 2 < n){
-        bool abc = false;
-        if(s[i] == 'A' and s[jumps[i]] == 'B' and s[jumps[jumps[i]]] == 'C'){
-            jumps[prev[i]] = jumps[jumps[jumps[i]]];
-            prev[jumps[jumps[jumps[i]]]] = prev[i];
-            abc = true;
-        }
-        if(i > 0 and abc){
-            i = prev[prev[i]];
-        }
-        i = jumps[i];
+            while(i >= 0){
+                bool bad_a = abc1(s, next, prev, i);
+                if(bad_a){
+                    next[prev[i]] = next[next[next[i]]];
+                    prev[next[next[next[i]]]] = prev[i];
+                }
+                else{
+                i = prev[i];
+                break;
+                }
+                if(next[prev[i]])
+            }
+        
+        i = next[i];
     }
 
-    int j = 0;
+    int j = -1;
     while(j < n){
-        cout << s[j];
-        j = jumps[j];
+        j = next[j];
+        if(j < n){
+            cout << s[j];
+        }
     }
     
 }
