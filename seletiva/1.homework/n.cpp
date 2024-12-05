@@ -7,7 +7,7 @@ vector<bool> r_line;
 vector<vector<bool>> bs;
 vector<vector<bool>> br;
 vector<bool> bp;
-stack<pair<int, pair<int, int>>> cmds;
+vector<pair<int, pair<int, int>>> cmds;
 
 void place(int i, int j){    
     pair<int, int> pos;
@@ -41,7 +41,7 @@ void stack_push(int cmd, int i, int j){
     pair<int, pair<int, int>> com;
     com.first = 1;
     com.second = pos;
-    cmds.push(com);
+    cmds.push_back(com);
 }
 
 int main(){
@@ -82,11 +82,14 @@ int main(){
             int i, j;
             cin >> i;
             j = 0;
-            reverse(i)
+            reverse(i);
             stack_push(cmd, i, j);
         }
         else{
-            
+            int time;
+            cin >> time;
+            for(int j = 0; j < )
+
         }
         
     }
