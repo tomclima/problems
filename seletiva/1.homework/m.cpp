@@ -38,23 +38,21 @@ int main(){
         int hi = 0;
         bool possible = true;
         for(int i = 0; i < events.size(); i++){
-            if(powers[pi].first == events[i]){
+            if(pi < powers.size() and events[i] == powers[pi].first){
                 heap.push(powers[pi].second);
                 pi++;
             }
-            else if(events[i] == hurdles[hi].first){
-                while(heap.size() > 0 and hurdles[hi].second - hurdles[hi].first + 2 > jump){
+            else if(hi < hurdles.size()){
+                while(!heap.empty() and (hurdles[hi].second - hurdles[hi].first + 1) >= jump){
                     jump += heap.top();
                     heap.pop();
                     cnt++;
                 }
-                if(hurdles[hi].second - hurdles[hi].first + 2 > jump){
+                if(hurdles[hi].second - hurdles[hi].first + 1 >= jump){
                     possible = false;
                     i = events.size();
                 }
-                else{
-                    hi++;
-                }
+                hi++;
             }
         }
 
