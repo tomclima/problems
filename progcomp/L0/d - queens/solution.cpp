@@ -4,7 +4,7 @@
 int count = 0;
 
 bool safe_diagonal(std :: vector<std :: string> &board, std :: pair<int, int> &atk, std :: pair<int, int> &def){
-    
+
     bool answer = true;
     int dy = abs(atk.first - def.first);
     int dx = abs(atk.second - def.second);
