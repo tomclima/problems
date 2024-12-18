@@ -3,6 +3,7 @@ using namespace std;
 #define endl '\n'
 #define lng long long int
 
+// node = 1, start = 0, end = arr.size() - 1
 void buildsegtree(int start, int end, int node, vector<lng> &arr, vector<lng> &tree){
     if(start == end){
         tree[node] = arr[start];
@@ -29,34 +30,25 @@ lng query(vector<lng> &tree, int start, int end, int node, int l, int r){
 }
 
 
-
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(0);
-    string s;
-    cin >> s;
-    int size = s.length();
-    s.push_back('k');
+
+    int n, q;
+    cin >> n >> q;  
     vector<lng> arr;
-    for(int i = 0; i < size; i++){
-        if(s[i] == s[i+1]){
-            arr.push_back(1);
-        }
-        else{
-            arr.push_back(0);
-        }
+    arr.resize(n);
+    for(int i = 0; i < n; i++){
+        cin >> arr[i];
     }
-    int n = arr.size();
-    int m;
-    cin >> m;
     vector<lng> tree;
-    tree.resize(4 * size);
+    tree.resize(4 * n);
     buildsegtree(0, n-1, 1, arr, tree);
-    while(m--){
+
+    for(int i = 0; i < q; i++){
         int l, r;
         cin >> l >> r;
-        int answer = query(tree, 0, n-1, 1, l-1, r-2);
+        lng answer = query(tree, 0, n-1, 1,l -1, r-1);
         cout << answer << endl;
-
     }
 }
