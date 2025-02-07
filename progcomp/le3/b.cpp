@@ -5,17 +5,23 @@ using namespace std;
 
 vector<int> visited;
 vector<int> parent;
-vector<pair<int, int>> redundant;
+vector<vector<int>> redundant;
+vector<pair<int, int>> closed;
 vector<pair<int, int>> constructed;
 
+void check_redundancy(int v, int u){
+    if(!visited[u]) return;
+    if(u != parent[v] and v != parent[u] and redundant[u][v] == false) {
+        redundant[v][u] = true;
+        closed.push_back(make_pair(v, u));
+    }
+}
 
 void dfs(vector<vector<int>> &graph, int v){
     visited[v] = true;
     for(int i = 0; i < graph[v].size(); i++){
-        if(visited[graph[v][i]] and graph[v][i] != parent[v]){
-            redundant.push_back(make_pair(v, graph[v][i]));
-        }
-        else if(visited[graph[v][i]] == 0){
+        check_redundancy(v, graph[v][i]);
+        if(visited[graph[v][i]] == false){
             parent[graph[v][i]] = v;
             dfs(graph, graph[v][i]);
         }
@@ -45,6 +51,10 @@ int main(){
     graph.resize(n);
     visited.resize(n);
     parent.resize(n);
+    redundant.resize(n);
+    for(int i = 0; i < n; i++){
+        redundant[i].resize(n);
+    }
     for(int i = 0; i < n-1; i++){
         int v, u;
         cin >> v >> u;
@@ -62,7 +72,7 @@ int main(){
 
     cout << isles -1 << endl;;
     for(int i = 0; i < isles-1; i++){
-        cout << redundant[i].first+1 << " " << redundant[i].second + 1 << " ";
+        cout << closed[i].first+1 << " " << closed[i].second + 1 << " ";
         cout << constructed[i].first + 1 << " " << constructed[i].second + 1 << endl;
     }
 }
