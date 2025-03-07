@@ -7,9 +7,6 @@ using namespace std;
 
 
 
-
-
-
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(0);
@@ -35,7 +32,7 @@ int main(){
     vector<vector<bool>> visited;
     visited.resize(n);
     parent.resize(n);
-    for(int i = 0; i < n; i++){
+    for(int i = 0; i < n; i++){ 
         visited[i].resize(m);
         parent[i].resize(m);
         fill(parent[i].begin(), parent[i].end(), make_pair(-1, -1));
@@ -60,21 +57,21 @@ int main(){
             bfs_q.emplace(make_pair(curr.first, curr.second + 1));
         }
 
-        else if(curr.second - 1 >= 0 and lab[curr.first][curr.second-1] != 1 and !visited[curr.first][curr.second-1]) {
+        if(curr.second - 1 >= 0 and lab[curr.first][curr.second-1] != 1 and !visited[curr.first][curr.second-1]) {
             visited[curr.first][curr.second - 1] = 1;
             parent[curr.first][curr.second - 1] = curr;
 
             bfs_q.emplace(make_pair(curr.first, curr.second -1));
         }
         
-        else if(curr.first + 1 < n and lab[curr.first +1][curr.second] != 1 and !visited[curr.first + 1][curr.second]) {
+        if(curr.first + 1 < n and lab[curr.first +1][curr.second] != 1 and !visited[curr.first + 1][curr.second]) {
             visited[curr.first + 1 ][curr.second] = 1;
             parent[curr.first +1 ][curr.second] = curr;
 
             bfs_q.emplace(make_pair(curr.first + 1, curr.second));
         }
 
-        else if(curr.first -1 >= 0 and lab[curr.first -1][curr.second] != 1 and !visited[curr.first -1][curr.second]) {
+        if(curr.first -1 >= 0 and lab[curr.first -1][curr.second] != 1 and !visited[curr.first -1][curr.second]) {
             visited[curr.first -1 ][curr.second] = 1;
             parent[curr.first -1][curr.second] = curr;
 
@@ -83,9 +80,12 @@ int main(){
     }
 
     int count = 0;
-    while(parent[curr.first][curr.second].first != -1){
-        curr = parent[curr.first][curr.second];
-        count++;
+    if(parent[dst.first][dst.second].first != - 1){
+        while(curr.first != src.first or curr.second != src.second){
+            curr = parent[curr.first][curr.second];
+            count++;
+        }
+
     }
 
     if(count == 0) cout << "Labirinto Impossivel" << endl;
