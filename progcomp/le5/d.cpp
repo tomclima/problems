@@ -14,6 +14,7 @@ void count_sort(vector<int> &p, vector<int> &c){
 
     for(auto e = c.begin(); e != c.end(); e++) cnt[*e]++;
 
+
     vector<int> pos(n); pos[0] = 0;
     for(int i = 1; i < n; i++){
         pos[i] = pos[i-1] + cnt[i-1];
@@ -29,14 +30,14 @@ void count_sort(vector<int> &p, vector<int> &c){
     p = new_p;
 }
 
-void SuffixArray(vector<int> &p, string s){
+void SuffixArray(vector<int> &p, vector<int> &c, string s){
     
 
     s = s.append("$");
     
     int n = s.length();
     p.resize(n);
-    vector<int> c(n);
+    c.resize(n);
 
     vector<pair<char, int>> a(n);
 
@@ -92,21 +93,27 @@ void SuffixArray(vector<int> &p, string s){
 }
 
 void lcp(vector<int> &l, vector<int> &p, string &s){
+    
     int n = p.size();
     
-    vector<int> c = p;
-    reverse(c.begin(), c.end());
+    l.resize(n -1);
+    vector<int> c(n, 0);
 
-    l.resize(n);
+    for(int i = 0; i < n; i++){
+        c[p[i]] = i;
+    }
 
+    n--;
     int k = 0;
-    for(int i = 0; i < n -1; i++){
-        int posi = c[i];
-        int j = p[posi-1];
+    for(int i = 0; i < n; i++){
+        
+        if(c[i] == n-1) k = 0;
 
-        while( s[i+k] == s[j+k]) k++;
-        l[posi] = k;
-        k = max(k-1, 0);
+        int j = p[c[i] + 1];
+        while(i + k < n and j + k < n and s[i + k] == s[j + k]) k++;
+        l[c[i]] = k;
+
+        if(k) k--;
     }
 
 }
@@ -121,34 +128,37 @@ int main(){
     cin >> s >> q;
 
     vector<int> p;
+    vector<int> c;
     vector<int> l;
 
-    SuffixArray(p, s);
+    SuffixArray(p, c, s);
     lcp(l, p, s);
 
-    vector<int> ord(p.size());
-    ord[0] = 0;
+    vector<lng> ord(p.size());
+    ord[0] = 0; ord[1] = 1;
+    lng  distinct = 1;
     for(int i = 2; i < p.size(); i++){
-        ord[i] = ord[i-1] + (s.length() - p[i-1] - l[i-2]) + 1;
+        ord[i] = ord[i-1] + (s.length() - p[i-1] - l[i-2]);
+        
+        if(i == p.size() - 1) distinct = ord[i] + (s.length() - p[i] - l[i-1] -1);
     }
+
 
     for(int i = 0; i < q; i++){
         
-        int x;
+        lng x;
         cin >> x;
 
-        auto a = lower_bound(ord.begin(), ord.end(), x);
-        if(a != ord.end() and *a == x) continue;
-        else{
-            a--;
-        }
-        int k = distance(ord.begin(), a);
-        int begin = p[k];
-        int end = p[k] + (x - ord[k]) + 1;
+        if(x > distinct) x = distinct;
 
-        for(int i = begin; i<= end; i++){
-            cout << s[i];
-        }
+        auto a = lower_bound(ord.begin(), ord.end(), x);
+        if(a == ord.end() or *a != x) a--;
+        lng k = distance(ord.begin(), a);
+        lng begin = p[k];
+        lng end = begin + l[k-1] + (x - ord[k]);
+
+        
+        cout << s.substr(begin, end - begin +1);
         cout << endl;
     }
 }
