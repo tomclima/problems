@@ -30,67 +30,53 @@ void count_sort(vector<int> &p, vector<int> &c){
     p = new_p;
 }
 
-void SuffixArray(vector<int> &p, vector<int> &c, string s){
-    
-
-    s = s.append("$");
-    
-    int n = s.length();
-    p.resize(n);
-    c.resize(n);
-
-    vector<pair<char, int>> a(n);
-
-    for(int i = 0; i < n; i++){
-        a[i] = {s[i], i};
-    }
-
-    sort(a.begin(), a.end());
-
-    for(int i = 0; i < n; i++) {
-        p[i] = a[i].second;
-    }
-
+void suffix_array(vector<int> &p, vector<int> &c, string s) {
+    s.append("$");
+    int n = s.size();
+    const int alphabet = 256;
+    vector<int> cnt(max(alphabet, n), 0);
+    p.resize(n); c.resize(n);
+    for (int i = 0; i < n; i++)
+        cnt[s[i]]++;
+    for (int i = 1; i < alphabet; i++)
+        cnt[i] += cnt[i-1];
+    for (int i = 0; i < n; i++)
+        p[--cnt[s[i]]] = i;
     c[p[0]] = 0;
-
-    for(int i = 1; i < n; i++){
-        
-        if(a[i].first == a[i-1].first){
-            
-            c[p[i]] = c[p[i- 1]];
-
-        } 
-        
-        else{
-
-            c[p[i]] = c[p[i-1]] +1;
-        }
+    int classes = 1;
+    for (int i = 1; i < n; i++) {
+        if (s[p[i]] != s[p[i-1]])
+            classes++;
+        c[p[i]] = classes - 1;
     }
 
-    lng power = 1; //  value to be doubled
-    while(power < n){
-        for(int i = 0; i < n; i++){
-            p[i] = (p[i] - power + n) % n;
+        vector<int> pn(n), cn(n);
+    for (int h = 0; (1 << h) < n; ++h) {
+        for (int i = 0; i < n; i++) {
+            pn[i] = p[i] - (1 << h);
+            if (pn[i] < 0)
+                pn[i] += n;
         }
-
-        count_sort(p, c);
-
-        vector<int> new_c(n);
-        new_c[p[0]] = 0;
-
-        for(int i = 1; i < n; i++){
-            pair<int, int> prv = {c[p[i]-1], c[(p[i-1] + power) % n]};
-            pair<int, int> now = {c[p[i]], c[(p[i] + power) % n]};
-            if(now == prv) new_c[p[i]] = new_c[p[i-1]];
-            else new_c[p[i]] = new_c[p[i-1]] + 1;
+        fill(cnt.begin(), cnt.begin() + classes, 0);
+        for (int i = 0; i < n; i++)
+            cnt[c[pn[i]]]++;
+        for (int i = 1; i < classes; i++)
+            cnt[i] += cnt[i-1];
+        for (int i = n-1; i >= 0; i--)
+            p[--cnt[c[pn[i]]]] = pn[i];
+        cn[p[0]] = 0;
+        classes = 1;
+        for (int i = 1; i < n; i++) {
+            pair<int, int> cur = {c[p[i]], c[(p[i] + (1 << h)) % n]};
+            pair<int, int> prev = {c[p[i-1]], c[(p[i-1] + (1 << h)) % n]};
+            if (cur != prev)
+                ++classes;
+            cn[p[i]] = classes - 1;
         }
-
-        c = new_c;
-        power *= 2;
+        c.swap(cn);
     }
-
-
 }
+
 
 void lcp(vector<int> &l, vector<int> &p, string &s){
     
@@ -131,7 +117,7 @@ int main(){
     vector<int> c;
     vector<int> l;
 
-    SuffixArray(p, c, s);
+    suffix_array(p, c, s);
     lcp(l, p, s);
 
     vector<lng> ord(p.size());
