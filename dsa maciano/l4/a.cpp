@@ -61,14 +61,14 @@ void heap_removemin(Edge **heap, int &size){
     bool isheap = false;
     int k = 1;
     Edge* v = heap[k];
-    while(!isheap and (2 * k < size)){
+    while(!isheap and (2 * k <= size)){
         
         int j = 2 * k;
-        if(j < size and heap[j]->weight < heap[j + 1]->weight){
+        if(j < size and heap[j]->weight > heap[j + 1]->weight){
             j++;
         }
 
-        if(v->weight >= heap[j]->weight){
+        if(v->weight <= heap[j]->weight){
             isheap = true;
         }
 
