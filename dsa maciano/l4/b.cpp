@@ -1,20 +1,19 @@
 #include <iostream>
 #include <stdlib.h> 
 using namespace std;
-#define endl "\n";
 
-#define INF 999999
+#define INF 99999
 #define ADICAO 1
 #define BUSCA 2
 
 
 
 void heap_print(int heap[], int d[], int heap_size){
-    for(int i = 1; i < heap_size; i++){
+    for(int i = 1; i <= heap_size; i++){
         cout << i<< ":(" <<   heap[i] << "," <<  d[heap[i]] <<  ") ";
     }
-    cout << endl;
-    cout << endl;
+    cout << endl << endl;
+    
 }
 
 void heap_botup(int heap[], int size, int d[]){
@@ -197,7 +196,7 @@ int main(){
     }
 
 
-
+    int counter = 0;
     for(int i = 0; i < n; i++){
         
         int consult_type;
@@ -218,11 +217,13 @@ int main(){
             
             int d[graph_size];
             int parent[graph_size];
+            counter++;
+            cout << counter << endl;
             dijkstra(graph, graph_size, v, d, parent);
             // delete[] parent;
             
             if(d[u] == INF) d[u] = -1;
-            cout << d[u] << endl;
+            //cout << d[u] << endl;
             // delete[] d;
 
         }
