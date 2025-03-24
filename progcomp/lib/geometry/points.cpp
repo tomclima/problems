@@ -4,10 +4,10 @@
 using namespace std;
 #define endl '\n'
 #define lng long long int
+#define vec vector<double>
 
 
-
-double vec_dot_product(vector<double> vec1, vector<double> vec2){
+double vec_dot_product(vec &vec1, vec &vec2){
 
     double prod = 0;
     for(int i = 0; i < vec1.size(); i++){
@@ -19,20 +19,20 @@ double vec_dot_product(vector<double> vec1, vector<double> vec2){
 
 
 
-double vec_module(vector<double> vec){
-    return sqrt(vec_dot_product(vec, vec));
+double vec_mod(vec &vec1){
+    return sqrt(vec_dot_product(vec1, vec1));
 }
 
 
 
-void vec_by_scalar(vector<double> vec1, double scal){
+void vec_by_scalar(vec &vec1, double scal){
     for(int i = 0; i < vec1.size(); i++){
         vec1[i] *= scal;
     }
 }
 
 
-void vector_diff(vector<double> vec1, vector<double> vec2, vector<double> diff){
+void vec_diff(vec &vec1, vec &vec2, vec &diff){
     diff.resize(vec1.size());
 
     for(int i = 0; i < diff.size(); i++){
@@ -41,27 +41,35 @@ void vector_diff(vector<double> vec1, vector<double> vec2, vector<double> diff){
 
 }
 
+void vec_sum(vec &vec1, vec &vec2, vec &sum){
+    sum.resize(vec1.size());
 
-double vec_dist(vector<double> p1, vector <double> p2){
+    vec inverted = vec2;
+    vec_by_scalar(inverted, -1);
+    vec_diff(vec1, inverted, sum);
+}
+
+
+double vec_dist(vec &p1, vec &p2){
     
-    vector<double> diff;
-    vector_diff(p1, p2, diff);
+    vec diff;
+    vec_diff(p1, p2, diff);
 
     return sqrt(vec_dot_product(diff, diff));
 }
 
-double cosine(vector<double> vec1, vector<double> vec2){
+double cosine(vec &vec1, vec &vec2){
     
     double scal = vec_dot_product(vec1, vec2);
 
     double mod1 = sqrt(vec_dot_product(vec1, vec1));
     double mod2 = sqrt(vec_dot_product(vec2, vec2));
 
-    return abs((mod1 * mod2)/scal);
+    return (mod1 * mod2)/scal;
 }
 
 
-void proj(vector<double> vec1, vector<double>vec2, vector<double> proj){
+void vec_proj(vec &vec1, vec &vec2, vec &proj){
     
     double cos = cosine(vec1, vec2);
 
@@ -74,17 +82,6 @@ void proj(vector<double> vec1, vector<double>vec2, vector<double> proj){
         proj[i] = vec2[i] * (dot/dotvec2);
     }
 }
-
-
-void vector_sum(vector<double> vec1, vector<double> vec2, vector<double> sum){
-    sum.resize(vec1.size());
-
-    vector<double> inverted = vec2;
-    vec_by_scalar(inverted, -1);
-    vector_diff(vec1, inverted, sum);
-}
-
-
 
 
 int main(){
