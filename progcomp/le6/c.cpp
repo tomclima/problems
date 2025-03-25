@@ -136,8 +136,8 @@ int orientation(vec &p1, vec &p2, vec &p3){
     
     double cross = vec_cross_product(p1, p2, p3);
 
-    if (cross < 0) return -1;
-    if(cross > 0) return 1;
+    if (cross < 0) return -1;  // to the right
+    if(cross > 0) return 1;  // to the left
     return 0;
 }
 
@@ -169,7 +169,7 @@ void convex_hull(vector<vec>& a, bool include_colinear, vector<vec> &up, vector<
     
     up.push_back(p1); down.push_back(p1);
 
-    for(int i = 0; i < a.size(); i++){
+    for(int i = 1; i < a.size(); i++){
         
         if(i == a.size() -1 or cw(p1, a[i], p2, include_colinear)){
             while(up.size() >= 2 and !cw(up[up.size() -2], up[up.size()-1], a[i], include_colinear)){
@@ -209,7 +209,13 @@ int main(){
 
     vector<vec> up, down; convex_hull(points, true, up, down);
 
-    for(int i = 1; i < up.size() -1; i++) cout << up[i][0] << " " << up[i][1];
-    for(int i = 1; i < down.size() -1; i++) cout << down[i][0] << " " << down[i][1];
+    cout << up.size() + down.size() -2 << endl;
+    for(int i = 0; i < up.size(); i++){
+        cout << up[i][0] << " " << up[i][1] << endl;
+    }
+
+    for(int i = 1; i < down.size()-1; i++){
+        cout << down[i][0] << " " << down[i][1] << endl;
+    }
     
 }

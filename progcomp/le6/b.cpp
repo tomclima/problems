@@ -4,12 +4,12 @@
 using namespace std;
 #define endl '\n'
 #define lng long long int
-#define vec vector<long int>
+#define vec vector<lng>
 
 
-double vec_dot_product(vec &vec1, vec &vec2){
+long double  vec_dot_product(vec &vec1, vec &vec2){
 
-    double prod = 0;
+    long double  prod = 0;
     for(int i = 0; i < vec1.size(); i++){
         prod += vec1[i] * vec2[i];
     }
@@ -19,13 +19,13 @@ double vec_dot_product(vec &vec1, vec &vec2){
     
 
 
-double vec_mod(vec &vec1){
+long double  vec_mod(vec &vec1){
     return sqrt(vec_dot_product(vec1, vec1));
 }
 
 
 
-void vec_by_scalar(vec &vec1, double scal){
+void vec_by_scalar(vec &vec1, long double  scal){
     for(int i = 0; i < vec1.size(); i++){
         vec1[i] *= scal;
     }
@@ -50,7 +50,7 @@ void vec_sum(vec &vec1, vec &vec2, vec &sum){
 }
 
 
-double vec_dist(vec &p1, vec &p2){
+long double  vec_dist(vec &p1, vec &p2){
     
     vec diff;
     vec_diff(p1, p2, diff);
@@ -58,12 +58,12 @@ double vec_dist(vec &p1, vec &p2){
     return sqrt(vec_dot_product(diff, diff));
 }
 
-double cosine(vec &vec1, vec &vec2){
+long double  cosine(vec &vec1, vec &vec2){
     
-    double scal = vec_dot_product(vec1, vec2);
+    long double  scal = vec_dot_product(vec1, vec2);
 
-    double mod1 = sqrt(vec_dot_product(vec1, vec1));
-    double mod2 = sqrt(vec_dot_product(vec2, vec2));
+    long double  mod1 = sqrt(vec_dot_product(vec1, vec1));
+    long double  mod2 = sqrt(vec_dot_product(vec2, vec2));
 
     return (mod1 * mod2)/scal;
 }
@@ -71,11 +71,11 @@ double cosine(vec &vec1, vec &vec2){
 
 void vec_proj(vec &vec1, vec &vec2, vec &proj){
     
-    double cos = cosine(vec1, vec2);
+    long double  cos = cosine(vec1, vec2);
 
-    double dotvec2 = vec_dot_product(vec2, vec2);
+    long double  dotvec2 = vec_dot_product(vec2, vec2);
 
-    double dot = vec_dot_product(vec1, vec2);
+    long double  dot = vec_dot_product(vec1, vec2);
 
     proj.resize(vec1.size( ));
     for(int i = 0; i < proj.size(); i++){
@@ -93,7 +93,7 @@ bool vec_equal(vec &vec1, vec &vec2){
     return true;
 }
 
-double vec_cross_product(vec v1, vec v2, vec v3){
+lng  vec_cross_product(vec v1, vec v2, vec v3){
     return (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v2[1] - v1[1]) * (v3[0] - v1[0]);
 }
 
@@ -117,7 +117,7 @@ int point_in_polygon(vector<vec> polygon, vec point){
             bool below = polygon[i][1]< point[1];
 
             if(below != polygon[j][1] < point[1]){
-                int orientation = vec_cross_product(polygon[i], polygon[j], point);
+                lng orientation = vec_cross_product(polygon[i], polygon[j], point);
                 if(orientation == 0) return 0;
                 if(below == (orientation >  0)){
                     if(below) widing_number++;
@@ -136,7 +136,7 @@ int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(0);
 
-    int n, m;
+    long long int n, m;
     cin >> n >> m;
 
     vector<vec> polygon;
@@ -148,7 +148,7 @@ int main(){
     for(int i = 0; i < m; i++){
         vec point(2);
         cin >> point[0] >> point[1];
-        int widing = point_in_polygon(polygon, point);
+        long long int widing = point_in_polygon(polygon, point);
         if(widing == 0) cout << "BOUNDARY" << endl;
         else if(widing == 1) cout << "OUTSIDE" << endl;
         else cout << "INSIDE" << endl;
