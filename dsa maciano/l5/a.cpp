@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 
@@ -37,11 +38,15 @@ int main(){
         cin >> credits;
 
         int **dp = new int*[n + 1];
+        int **times_taken = new int*[n+1];
         for(int i = 0; i <= n; i++){
             dp[i] = new int[credits + 1];
+            times_taken[i] = new int[credits + 1];
+            memset(times_taken[i], 0, sizeof(times_taken[i]));
         }
+        
 
-        int times_taken[n+1];
+        
 
         // base case dp[0][j] for all == 0;
         for(int j = 0; j <= credits; j++){
@@ -50,7 +55,6 @@ int main(){
         // base case dp[i][0] for all == 0;
         for(int i = 0; i <= n; i++){
             dp[i][0] = 0;
-            times_taken[i] = 0;
         }
 
         // dp[i][0] and dp[0][j] are already defined, so start from 1
@@ -66,29 +70,24 @@ int main(){
                 }
                 
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+                times_taken[i][j] = times_taken[i][j-1];
 
                 if(j - c[i] >= 0){
                     
-                    int toy_fun = dp[i][j-c[i]] + fun_factor(i, times_taken[i] +1, base_fun, base_boredom);
+                    int toy_fun = dp[i][j-c[i]] + fun_factor(i, times_taken[i][j - c[i]] +1, base_fun, base_boredom);
                     if(toy_fun > dp[i][j]){
-                        times_taken[i]++;
+                        times_taken[i][j] = times_taken[i][j - c[i]] + 1;
                         dp[i][j] = toy_fun;
                     }
-                    
-                    
                 } 
+              
                 
             }
         }
 
         cout << tc << ": " << dp[n][credits] << endl;
 
-        for(int i =0; i <= n; i++){
-            for (int j = 0; j <=credits; j++){
-                cout << dp[i][j] << " ";
-            }
-            cout << endl;
-        }
+        
 
         for(int i = 0; i <= n; i++) delete[] dp[i];
         delete[] dp;
