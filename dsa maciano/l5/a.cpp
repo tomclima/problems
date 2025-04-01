@@ -3,15 +3,55 @@
 using namespace std;
 
 
+typedef struct Toy{
+    
+    int base_fun;
+    int base_boredom;
+    int cost; 
+} Toy;
+
+Toy *create_toy(int fun, int boredom, int cost){
+
+    Toy *newtoy = new Toy;
+    newtoy->base_fun = fun;
+    newtoy->base_boredom = boredom;
+    newtoy->cost = cost;
+
+    return newtoy;
+}
+
 int max(int a, int b){
     if(a < b) return b;
     else return a;
 }
 
-int fun_factor(int index, int t, int base_fun[], int base_boredom[]){
+int fun_factor(Toy *toy, int t){
     
 
-    return base_fun[index] - (t-1)*(t-1)*base_boredom[index];
+    return toy->base_fun - (t-1)*(t-1)*toy->base_boredom;
+}
+
+int max_fun(int credits, int times_taken[], Toy *toys[], int number_toys, int dp[]){
+
+    if(dp[credits] >= 0) return dp[credits];
+
+    dp[credits] = 0;
+
+    for(int i = 1; i < number_toys + 1; i++){
+        
+        if(credits >= toys[i]->cost){
+            
+            int *newvec = new int[number_toys + 1];
+            copy(times_taken, times_taken + number_toys + 1, newvec);
+            
+            newvec[i]++;
+
+            dp[credits] = max(dp[credits], fun_factor(toys[i], newvec[i]) + max_fun(credits - toys[i]->cost, newvec, toys, number_toys, dp));
+            delete[] newvec;
+        }
+    }
+
+    return dp[credits];
 }
 
 int main(){
@@ -19,14 +59,16 @@ int main(){
     int n;
     cin >> n;
 
-    int base_fun[n+1];
-    int base_boredom[n+1];
-    int c[n+1];
-    
+    Toy **toys = new Toy*[n +1];
+    toys[0] = create_toy(0, 0, 0);
+
     // 1 based for dp table coherence
-    for(int i = 1; i <= n; i++){
+    for(int i = 1; i < n +1 ; i++){
         
-        cin >> base_fun[i] >> base_boredom[i] >> c[i]; 
+        int base_fun, base_boredom, cost;
+        cin >> base_fun >> base_boredom >> cost;
+        toys[i] = create_toy(base_fun, base_boredom, cost);
+        
     }
 
     int k;
@@ -37,60 +79,24 @@ int main(){
         int credits;
         cin >> credits;
 
-        int **dp = new int*[n + 1];
-        int **times_taken = new int*[n+1];
-        for(int i = 0; i <= n; i++){
-            dp[i] = new int[credits + 1];
-            times_taken[i] = new int[credits + 1];
-            memset(times_taken[i], 0, sizeof(times_taken[i]));
-        }
-        
+        int times_taken[n + 1];
+        int dynamic[credits+1];
 
-        
-
-        // base case dp[0][j] for all == 0;
-        for(int j = 0; j <= credits; j++){
-            dp[0][j] = 0;
-        }
-        // base case dp[i][0] for all == 0;
-        for(int i = 0; i <= n; i++){
-            dp[i][0] = 0;
+        for(int i = 0; i < credits + 1; i++){
+            dynamic[i] = -999999;
         }
 
-        // dp[i][0] and dp[0][j] are already defined, so start from 1
-        // recursive relation: dp[i][j] = max(dp[i-1][j], dp[i][j - c[i]] + fun_factor(i), 0)
-        for(int i = 1; i <= n; i++){
-            for(int j = 1; j <= credits; j++){
-                
-                if(j == 6038){
-                    cout << "";
-                }
-                if(j == 2 *6038){
-                    cout << "";
-                }
-                
-                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
-                times_taken[i][j] = times_taken[i][j-1];
-
-                if(j - c[i] >= 0){
-                    
-                    int toy_fun = dp[i][j-c[i]] + fun_factor(i, times_taken[i][j - c[i]] +1, base_fun, base_boredom);
-                    if(toy_fun > dp[i][j]){
-                        times_taken[i][j] = times_taken[i][j - c[i]] + 1;
-                        dp[i][j] = toy_fun;
-                    }
-                } 
-              
-                
-            }
+        for(int i = 0; i < n +1; i++){
+            times_taken[i] = 0;
         }
-
-        cout << tc << ": " << dp[n][credits] << endl;
 
         
 
-        for(int i = 0; i <= n; i++) delete[] dp[i];
-        delete[] dp;
+
+        cout << tc << ": " << max_fun(credits, times_taken, toys, n, dynamic) << endl;
+
+        
+
         
     }
 }
