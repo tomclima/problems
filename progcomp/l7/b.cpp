@@ -7,80 +7,36 @@ using namespace std;
 #define lng long long int
 #define p_queue priority_queue<pair<State, lng>, vector<pair<State, lng>>, Custom_comp>
 
-typedef tuple<int, int, int, bool> State;
+typedef tuple<int, int, int> State;
 
-class cmap {
-    private:
-        std::map<State, lng> myMap;
-    public:
-        lng& operator[](State key) {
-            if (myMap.find(key) == myMap.end()) {
-                myMap[key] = INF;  // Custom default value
-            }
-            return myMap[key];
-        }
-    };
 
-class Custom_comp{
-    public:
-        bool operator()(const pair<State, lng> &a, const pair<State, lng> &b){
-            return a.second > b.second;
-        }
-};
+vector<int> dn10 = {-1, -1, 0, 0, 0};
+vector<int> dn5 = {0, 0, -2, -1, 0};
 
-bool get_mark(State state, set<State> visited){
-    if(visited.find(state) != visited.end()) return true;
-    else return false;
 
-}
+lng cost[101][51][151];
 
-void relax(State a, State b, int w, cmap &cost, p_queue &heap){
-    if(cost[a] > cost[b] + w){
-        cost[a] = cost[b] + w;
-        heap.push({b, cost[b]});
-    }
-}
-
-vector<int> dn1 =   {-8, -3, -3, +2, +2};
-vector<int> dn5 =   {0, -1, 0, -2, 0};
-vector<int> dn10 =  {0, 0, -1, 0, -1};
-vector<int> w_vec = {8, 4, 4, 2, 1};
-vector<bool> change_v = {0, 0, 0, 1, 1};
-
-lng solve(State origin, lng total_money, vector<vector<vector<vector<lng>>>> &dp, int c_max){
+lng solve(State origin, lng total_money, int c_max){
     
     int n5 = get<0>(origin);
     int n10 = get<1>(origin);
     int c = get<2>(origin);
     int ch = get<3>(origin);
-
-    if(dp[n5][n10][c][ch] < INF) return dp[n5][n10][c][ch];
-    if(get<2>(origin) >= c_max) return 0;
-
-    dp[n5][n10][c][ch] = INF;
-
-    int new_c = get<2>(origin) + 1;
-
-    int n1 = total_money - 8*c - 5*n5 - 10*n10 + ch * 2;
     
-    lng q = dp[n5][n10][c][ch];
-    for(int i = 0; i < 5; i++){
-        
-        int new_n1 = n1 + dn1[i];
-        int new_n5 = get<0>(origin) + dn5[i];
-        int new_n10 = get<1>(origin) + dn10[i];
-        int w = w_vec[i];
+    int n1 = total_money - 8*c - 5*n5 - 10*n10 + ch * 2;
 
+    if(cost[n5][n10][c] > -1) return cost[n5][n10][c];
+    if(c >= c_max) return cost[n5][n10][c] = 0;
 
-        if(new_n1 >= 0 and new_n5 >= 0 and new_n10 >= 0){
-            State trans = {new_n5, new_n10, new_c, change_v[i]};
-            q = min(q, w + solve(trans, total_money, dp, c_max));
-        }
-    }
+    
+    int new_c = get<2>(origin) + 1;
+    
+    lng q = INF;
+    
 
-    dp[n5][n10][c][ch] = q;
+    cost[n5][n10][c] = q;
 
-    return dp[n5][n10][c][ch];
+    return cost[n5][n10][c];
 }
 
 
@@ -95,15 +51,13 @@ int main(){
         int c, n1, n5, n10;
         cin >> c >> n1 >> n5 >> n10;
         
-        vector<vector<vector<vector<lng>>>> cost(101, vector<vector<vector<lng>>>(51, vector<vector<lng>>(151, vector<lng>(2, INF))));
+        memset(cost, -1, sizeof(cost));
         
-        State origin = {n5, n10, 0, false};
+        State origin = {n5, n10, 0};
         int total_money = n1 + 5*n5 + 10*n10;
 
-        int a = solve(origin, total_money, cost, c);
+        int a = solve(origin, total_money, c);
 
         cout << a << endl;
     }   
-
-
 }
