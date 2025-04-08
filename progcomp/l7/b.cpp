@@ -18,7 +18,7 @@ vector<int> w_vec =     {+4, +4, +2, +1};
 
 
 lng cost[150][100][150];
-
+// VENCI
 lng solve(State origin, int n1, int c_max){
     
     int n5 = get<0>(origin);
