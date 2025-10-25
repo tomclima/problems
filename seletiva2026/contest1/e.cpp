@@ -14,7 +14,7 @@ int main(){
         int n, k; cin >> n >> k;
         vector<ll> arr;
         for(int i = 0; i < n; i++){
-            ll val; cin >> val;
+            ll val; cin >> val; 
             arr.push_back(val);
         }
 
@@ -33,18 +33,11 @@ int main(){
             continue;
         }
 
-        neigh_diff[0] = 0;
-        neigh_diff[n-1] = 0;
+        
 
-        for(int i = 1; i < n-1; i++){
-            if(neigh_diff[i] <= 0 and neigh_diff[i+1] <= 0 and neigh_diff[i-1] <= 0){
-                neigh_diff[i] = 1;
-                tall++;
-                i++;
-            }
-        }
+        
 
 
-        cout << tall << endl;
+        cout << (n - 1)/2 << endl;
     }
 }
