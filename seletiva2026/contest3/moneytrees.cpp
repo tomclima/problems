@@ -2,7 +2,7 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-// #define endl '\n'
+//#define endl '\n'
 #define ll long long int
 
 /*
@@ -63,18 +63,18 @@ int solve(){
 
     
     int max_len = 0;
-    prefix.push_back(1e18);
+    
 
     for(int i = 0; i < divisible_subarrays.size(); i++){
         
-        for(int j = divisible_subarrays[i].first; j < divisible_subarrays[i].second; j++){
+            for(int j = divisible_subarrays[i].first; j <= divisible_subarrays[i].second; j++){
 
             ll l = 0;
-            ll r = divisible_subarrays[i].second - j+1;
-            ll ans = r+1;
+            ll r = divisible_subarrays[i].second - j+2;
+            ll ans = r;
             while (l <= r){
                 ll middle = (r + l)/2;
-                if (prefix[j + middle] - prefix[j] > k){
+                if (middle > divisible_subarrays[i].second - j + 1 or prefix[j + middle] - prefix[j] > k){
                     r = middle-1;
                     ans = middle;
                 }
@@ -82,9 +82,10 @@ int solve(){
                     l = middle+1;
                 }
             }
-            
-            if(ans > max_len) max_len = ans-1;  
+            if((ans-1) > max_len) max_len = ans -1;  
         }
+
+        
     }
 
     cout << max_len << endl;
