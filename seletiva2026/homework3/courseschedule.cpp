@@ -34,7 +34,7 @@ int solve(){
         }
     }
 
-    if(ord.empty()) cout << "IMPOSSIBLE" << endl;
+    if(ord.empty() or ord.size() < n) cout << "IMPOSSIBLE" << endl;
     else{
         for(int i = 0; i < n; i++){
             cout << ord[i]+1 << " ";
