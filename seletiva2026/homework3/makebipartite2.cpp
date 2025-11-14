@@ -5,8 +5,9 @@ using namespace std;
 #define endl '\n'
 #define ll long long int
 
+vector<int> color(2*1e5, -1);
+
 pair<int, int> dfs(vector<vector<int>> &graph, vector<int> &visited, vector<ll> &island_sizes, vector<int> &island_connections, int root, int island){
-    vector<int> color(graph.size(), -1);
     ll white = 0;
     ll black = 0;
     stack<int> queue;
