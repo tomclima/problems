@@ -67,10 +67,17 @@ pair<int, int> add_stone(int y, int x, int color){
         enemy_infos.push_back(get_groupinfo(coord_encode({y, x-1}), !color, visited));
     }
 
+    int player_destroyed = playerinfo.second * (playerinfo.first == 0);
+    int enemy_destroyed = 0;
+    for(int i = 0; i < 4; i++){
+        enemy_destroyed+= enemy_infos[i].second * (enemy_infos[i].first == 0);
+    }
 
+
+    return {player_destroyed, enemy_destroyed};
 }
 
-pair<int, int> get_groupinfo(int root, int color, vector<int> visited){
+pair<int, int> get_groupinfo(int root, int color, vector<int> visited){ // returb {liberties, groupsize}
 
     int group_size = 0;
     set<int> group_liberties;
@@ -120,7 +127,14 @@ int solve(){
     for(int i = 0; i < n; i++){
         int a, b; cin >> a >> b;
 
-        
+        pair<int, int> player_enemy = add_stone(a-1, b-1, i%2);
+
+        if(i %2 == 0){
+            cout << player_enemy.first << " " << player_enemy.second;
+        }
+        else{
+            cout << player_enemy.second << " " << player_enemy.first;
+        }
 
 
     }
