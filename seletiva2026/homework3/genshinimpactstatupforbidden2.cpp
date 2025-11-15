@@ -55,7 +55,7 @@ void init_graph(){
 
 pair<int, int> get_groupinfo(int root, int color, vector<int> visited){ // returb {liberties, groupsize}
 
-    set<int> group_liberties;
+    vector<int> group_liberties;
     stack<int> queue;
 
     vector<int> group_members;
@@ -64,7 +64,7 @@ pair<int, int> get_groupinfo(int root, int color, vector<int> visited){ // retur
     queue.push(root);
     if(get_color(root) != color) return {0, 0};
 
-    while(!queue.empty()){
+    while(!queue.empty() and group_liberties.size() == 0){
         int u = queue.top(); queue.pop();
         
         for(int i: graph[u]){
@@ -76,7 +76,7 @@ pair<int, int> get_groupinfo(int root, int color, vector<int> visited){ // retur
             int color_i = get_color(i);
             if(color_i == -1){
                 visited[i] = true;
-                group_liberties.insert(i);                
+                group_liberties.push_back(i);              
             }
             else if(color_i == color){
                 group_members.push_back(i);
