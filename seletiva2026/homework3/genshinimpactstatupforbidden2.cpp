@@ -2,7 +2,7 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#define endl '\n'
+//#define endl '\n'
 #define ll long long int
 #define SIDE_LEN 19
 
@@ -22,6 +22,85 @@ int get_color(int encoded_coord){
     return board[y][x];
 }
 
+void set_empty(int encoded_coord){
+    int y = encoded_coord/SIDE_LEN;
+    int x = encoded_coord % SIDE_LEN;
+    board[y][x] = -1;
+}
+
+void init_graph(){
+    for(int y = 0; y < SIDE_LEN; y++){
+        for(int x = 0; x < SIDE_LEN; x++){
+            int encoded = coord_encode({y, x});
+            if(y + 1 < SIDE_LEN) {
+                graph[encoded].push_back(coord_encode({y+1, x}));
+                
+            }
+            if(y-1 >= 0) {
+                graph[encoded].push_back(coord_encode({y-1, x}));
+
+            }
+            if(x + 1 < SIDE_LEN){
+                graph[encoded].push_back(coord_encode({y, x+1}));
+        
+
+            } 
+            if(x-1 >= 0) {
+                graph[encoded].push_back(coord_encode({y, x-1}));
+
+            }
+        }
+    }
+}
+
+pair<int, int> get_groupinfo(int root, int color, vector<int> visited){ // returb {liberties, groupsize}
+
+    set<int> group_liberties;
+    stack<int> queue;
+
+    vector<int> group_members;
+    visited[root] = true;
+    group_members.push_back(root);
+    queue.push(root);
+    if(get_color(root) != color) return {0, 0};
+
+    while(!queue.empty()){
+        int u = queue.top(); queue.pop();
+        
+        for(int i: graph[u]){
+            
+            if(visited[i]){
+                continue;
+            }
+
+            int color_i = get_color(i);
+            if(color_i == -1){
+                visited[i] = true;
+                group_liberties.insert(i);                
+            }
+            else if(color_i == color){
+                group_members.push_back(i);
+                visited[i] = true;
+                queue.push(i);
+            }
+
+        }
+    }
+
+    for(auto liberty : group_liberties){
+        visited[liberty] = false;
+    }
+
+    int liberties = group_liberties.size();
+
+    if(liberties == 0){
+        for(int i : group_members) set_empty(i);
+    }
+
+    return {liberties, group_members.size()};
+}
+
+
 
 pair<int, int> add_stone(int y, int x, int color){
     board[y][x] = color;
@@ -29,29 +108,6 @@ pair<int, int> add_stone(int y, int x, int color){
     
     vector<int> visited(SIDE_LEN*SIDE_LEN);
 
-    if(y + 1 < SIDE_LEN) {
-        graph[encoded].push_back(coord_encode({y+1, x}));
-        graph[coord_encode({y+1, x})].push_back(encoded);
-        
-    }
-    if(y-1 >= 0) {
-        graph[encoded].push_back(coord_encode({y-1, x}));
-        graph[coord_encode({y-1, x})].push_back(encoded);
-
-    }
-    if(x + 1 < SIDE_LEN){
-        graph[encoded].push_back(coord_encode({y, x+1}));
-        graph[coord_encode({y, x+1})].push_back(encoded);
- 
-
-    } 
-    if(x-1 >= 0) {
-        graph[encoded].push_back(coord_encode({y, x-1}));
-        graph[coord_encode({y, x-1})].push_back(encoded);
-
-    }
-
-    pair<int, int> playerinfo = get_groupinfo(coord_encode({y, x}), color, visited);
     vector<pair<int, int>> enemy_infos;
     if(y + 1 < SIDE_LEN) {
         enemy_infos.push_back(get_groupinfo(coord_encode({y+1, x}), !color, visited));
@@ -66,10 +122,11 @@ pair<int, int> add_stone(int y, int x, int color){
     if(x-1 >= 0) {
         enemy_infos.push_back(get_groupinfo(coord_encode({y, x-1}), !color, visited));
     }
+    pair<int, int> playerinfo = get_groupinfo(coord_encode({y, x}), color, visited);
 
     int player_destroyed = playerinfo.second * (playerinfo.first == 0);
     int enemy_destroyed = 0;
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < enemy_infos.size(); i++){
         enemy_destroyed+= enemy_infos[i].second * (enemy_infos[i].first == 0);
     }
 
@@ -77,48 +134,6 @@ pair<int, int> add_stone(int y, int x, int color){
     return {player_destroyed, enemy_destroyed};
 }
 
-pair<int, int> get_groupinfo(int root, int color, vector<int> visited){ // returb {liberties, groupsize}
-
-    int group_size = 0;
-    set<int> group_liberties;
-    stack<int> queue;
-
-    visited[root] = true;
-    queue.push(root);
-    group_size++;
-    if(get_color(root) != color) return {0, 0};
-
-    while(!queue.empty()){
-        int u = queue.top(); queue.pop();
-        
-        for(int i: graph[u]){
-            
-            if(visited[i]){
-                continue;
-            }
-
-            int color_i = get_color(i);
-            if(color_i == 0){
-                visited[i] = true;
-                group_liberties.insert(i);                
-            }
-            else if(color_i == color){
-                visited[i] = true;
-                queue.push(i);
-                group_size++;
-            }
-
-        }
-    }
-
-    for(auto liberty : group_liberties){
-        visited[liberty] = false;
-    }
-
-    int liberties = group_liberties.size();
-
-    return {liberties, group_size};
-}
 
 int solve(){
     int n; cin >> n;
@@ -135,8 +150,7 @@ int solve(){
         else{
             cout << player_enemy.second << " " << player_enemy.first;
         }
-
-
+        cout << endl;
     }
     
 
@@ -146,6 +160,8 @@ int solve(){
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(0);
+
+    init_graph();
 
     int t = 1; // cin >> t;
     while(t--){
