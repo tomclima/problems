@@ -25,9 +25,11 @@ int solve(){
     }
 
     vector<pii> goodguys;
+    vector<pii> badguys;
     for(int y = 0; y < n; y++){
         for(int x = 0; x < m; x++){
             if(board[y][x] == 'G') goodguys.push_back({y, x});
+            else if(board[y][x] == 'B') badguys.push_back({y, x});
         }
     }
 
@@ -40,7 +42,7 @@ int solve(){
                     if(!check_valid(next, n, m)){
                         continue;
                     }
-                    if(board[next.first][next.second] != 'G'){
+                    if(board[next.first][next.second] != 'G' and board[next.first][next.second] != 'B'){
                         board[next.first][next.second] = '#';
                     }
                 }
@@ -49,11 +51,12 @@ int solve(){
     }
 
 
+    
 
 
     // bfs
     queue<pii> queue;
-    vector<vector<int>> visited;
+    vector<vector<int>> visited(n, vector<int>(m, 0));
     queue.push({n-1, m-1});
     visited[n-1] [m-1] =true;
     while(!queue.empty()){
@@ -80,7 +83,15 @@ int solve(){
     for(pii guy : goodguys){
         possible &= visited[guy.first][guy.second];
     }
+    for(pii guy : badguys){
+        possible &= not visited[guy.first][guy.second];
+    }
 
+    if(possible) cout << "Yes" << endl;
+    else cout << "No" << endl;
+
+    return 0;
+    
     
     
 }
