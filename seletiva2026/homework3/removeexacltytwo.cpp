@@ -5,6 +5,41 @@ using namespace std;
 #define endl '\n'
 #define ll long long int
 
+int remove_one(vector<vector<int>> &graph, vector<int> &deg, vector<int> &visited, int n){
+    int max_deg = -1;
+    for(int i = 0; i <n; i++){
+        if(deg[i] > max_deg) max_deg = deg[i];
+    }
+    
+    vector<int> candidate_vertices;
+    for(int i = 0; i < n; i++){
+        if(deg[i] == max_deg and !visited[i]) candidate_vertices.push_back(i);
+    }
+    
+    int min_candidates_cut = 1e9;
+    int index_chosen = -1;
+    for(int u : candidate_vertices){
+        int candidates_cut = 0;
+        for(int i : graph[u]){  
+            if (deg[i] == max_deg) candidates_cut++;
+        }
+        if(min_candidates_cut > candidates_cut){
+            min_candidates_cut = candidates_cut;
+            index_chosen = u;
+        }
+    }
+    
+    for (auto i : graph[index_chosen]){
+        deg[i]--;
+    }
+    
+    visited[index_chosen] = 1;
+    int deg_chosen = deg[index_chosen];
+    deg[index_chosen] = -1;
+    
+    return deg_chosen;
+}
+
 int solve(){
     int n; cin >> n;
     vector<vector<int>> graph(n);
@@ -17,41 +52,14 @@ int solve(){
         deg[b-1]++;
     }
 
+    vector<int> visited(n);
+    
+    
+    int num_trees = remove_one(graph, deg, visited, n);
+    num_trees += remove_one(graph, deg, visited, n) - 1;
 
-    int no_trees = 1;
-
-    int max_deg = 0;   
-    int i_deg = -1;
-
-    for(int i = 0; i < n; i++){
-        if(deg[i] > max_deg) {
-            max_deg = deg[i];
-            i_deg = i;
-        }
-    }
-
-    no_trees = no_trees -1 + max_deg;
-    for(int k : graph[i_deg]){
-        deg[k]--;
-    }
-    deg[i_deg] = -1;
-
-    max_deg = 0;   
-    i_deg = -1;
-
-    for(int i = 0; i < n; i++){
-        if(deg[i] > max_deg) {
-            max_deg = deg[i];
-            i_deg = i;
-        }
-    }
-
-    no_trees = no_trees -1 + max_deg;
-
-    cout << no_trees << endl;
-
-
-
+    cout << num_trees << endl;
+    
     
     return 0;
 }
