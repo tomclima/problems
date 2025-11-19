@@ -24,6 +24,10 @@ int solve(){
     vector<vector<bool>> outside_blocks(n, vector<bool> (n, false));
 
     string ans;
+    for(int i = 0; i < m; i++){
+        ans.push_back('a');
+    }
+
     bool possible = true;
 
     vector<int> visited(m);
@@ -31,25 +35,29 @@ int solve(){
     queue.push(0);
     visited[0] = true;
     while(!queue.empty() and possible){
+        int k = queue.top();
         pair<int, int> u = roads[queue.top()]; queue.pop();
+
         int a = u.first; int b = u.second;
 
         if(!inside_blocks[a][b]){
+            ans[k] = 'i';
             for(int i = a+1; i < b; i++){
                 for(int j = 0; j < n; j++){
                     if(j < a or j > b){
-                        inside_blocks[a][b] = true;
-                        inside_blocks[a][b] = true;
+                        inside_blocks[i][j] = true;
+                        inside_blocks[j][i] = true;
                     }
                 }
             }
         }
         else if(!outside_blocks[a][b]){
+            ans[k] = 'o';
             for(int i = a+1; i < b; i++){
                 for(int j = 0; j < n; j++){
                     if(j < a or j > b){
-                        outside_blocks[a][b] = true;
-                        outside_blocks[a][b] = true;
+                        outside_blocks[i][j] = true;
+                        outside_blocks[j][i] = true;
                     }
                 }
             }
@@ -61,9 +69,19 @@ int solve(){
         for(int i = 0; i < m; i++){
             if(visited[i]) continue;
 
-            int a = roads
+            int a = roads[i].first;
+            int b = roads[i].second;
+
+            int curr = inside_blocks[a][b] + outside_blocks[a][b];
+            if(curr >= max_count){
+                index = i;
+                max_count = curr;
+            }
         }
-        
+        if(index != -1){
+            visited[index] = true;
+            queue.push(index);
+        }
     }
 
     if(!possible) cout << "Impossible";
