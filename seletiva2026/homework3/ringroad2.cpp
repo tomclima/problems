@@ -5,6 +5,8 @@ using namespace std;
 #define endl '\n'
 #define ll long long int
 
+
+
 int solve(){
     int n, m; cin >> n>> m;
     vector<pair<int, int>> roads;
@@ -23,37 +25,45 @@ int solve(){
 
     string ans;
     bool possible = true;
-    for(pair<int, int> road : roads){
-        int a = road.first;
-        int b = road.second;
-        
-        // check if inside possible
+
+    vector<int> visited(m);
+    stack<int> queue; 
+    queue.push(0);
+    visited[0] = true;
+    while(!queue.empty() and possible){
+        pair<int, int> u = roads[queue.top()]; queue.pop();
+        int a = u.first; int b = u.second;
+
         if(!inside_blocks[a][b]){
-            ans.push_back('i');
-            for(int i = a + 1; i < b; i++){
+            for(int i = a+1; i < b; i++){
                 for(int j = 0; j < n; j++){
-                    if(!(j >= a and j <= b)){
-                        inside_blocks[i][j] = true;
-                        inside_blocks[j][i] = true;
+                    if(j < a or j > b){
+                        inside_blocks[a][b] = true;
+                        inside_blocks[a][b] = true;
                     }
                 }
             }
         }
         else if(!outside_blocks[a][b]){
-            ans.push_back('o');
-            for(int i = a + 1; i < b; i++){
+            for(int i = a+1; i < b; i++){
                 for(int j = 0; j < n; j++){
-                    if(!(j >= a and j <= b)){
-                        outside_blocks[i][j] = true;
-                        outside_blocks[j][i] = true;
+                    if(j < a or j > b){
+                        outside_blocks[a][b] = true;
+                        outside_blocks[a][b] = true;
                     }
                 }
             }
         }
-        else{
-            possible = false;
-            break;
+        else possible = false;
+
+        int max_count = 0;
+        int index = -1;
+        for(int i = 0; i < m; i++){
+            if(visited[i]) continue;
+
+            int a = roads
         }
+        
     }
 
     if(!possible) cout << "Impossible";
