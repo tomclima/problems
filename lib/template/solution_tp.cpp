@@ -4,6 +4,7 @@
 using namespace std;
 #define endl '\n'
 #define ll long long int
+#define MAXN 1000000000000000000
 
 int solve(){
     return 0;
