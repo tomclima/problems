@@ -51,9 +51,9 @@ int solve(){
     }   
 
     int possible = true;
-    int all_parent = pai[0];
+    int all_parent = find(0);
     for(int u = 0; u < n and possible; u++){
-        if(pai[u] != all_parent){
+        if(find(u) != all_parent){
             possible = false;
         }
     }
