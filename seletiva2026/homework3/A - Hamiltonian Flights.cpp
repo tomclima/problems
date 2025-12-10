@@ -8,6 +8,16 @@ using namespace std;
 
 ll MOD = 1e9 + 7;
 
+ll topdown(ll node, ll set, vector<vector<ll>> &dp, vector<vector<int>> &graph){
+    if(dp[node][set] != -1) return dp[node][set];
+
+    ll val = 0;
+    for(int i = 0; i < dp.size(); i++){
+        if (i == node) continue;
+        val += topdown(i, ((set | (1 << i)) ^ (1 << i)), dp, graph);
+    }
+}
+
 int solve(){
     int n; cin >> n;
     int m; cin >> m;
