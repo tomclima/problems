@@ -61,3 +61,18 @@ vector<pair<int, int>> prime_decomposition(vector<int> &primes, int n){
 
     return decomposition;
 }
+
+vector<ll> get_divisors_naive(ll n){
+    vector<ll> divisors;
+    ll limit = floor(sqrt(n) + 1);
+    for(ll i = 1; i < limit; i++){
+        if(n % i == 0){
+          divisors.push_back(i);  
+          if(i != n/i) divisors.push_back(n/i); 
+        } 
+    }
+
+    sort(divisors.begin(), divisors.end());
+
+    return divisors;
+}
