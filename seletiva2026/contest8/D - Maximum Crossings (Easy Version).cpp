@@ -1,0 +1,38 @@
+/*link*/
+
+#include <bits/stdc++.h>
+using namespace std;
+#define endl '\n'
+#define ll long long int
+#define MAXN 1000000000000000000
+
+int solve(){
+    ll n; cin >> n;
+    vector<ll> arr;
+    for(int i = 0; i < n; i++){
+        ll a; cin >> a;
+        arr.push_back(a);
+    }
+             
+    ll count = 0;
+    for(int i = 0; i < n; i++){
+        for(int j = i+1; j < n; j++){
+            if(arr[j] <= arr[i]){
+                count++;
+            }
+        }
+    }
+
+    cout << count << endl;
+    return 0;
+}
+
+int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+
+    int t = 1; cin >> t;
+    while(t--){
+        solve();
+    }
+}
