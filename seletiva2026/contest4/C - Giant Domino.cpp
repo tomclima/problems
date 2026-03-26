@@ -2,7 +2,7 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#define endl '\n'
+//#define endl '\n'
 #define ll long long int
 
 int solve(){
@@ -25,21 +25,23 @@ int solve(){
     sort(middle.begin(), middle.end());
 
     int curr = first;
-    int i = 0;
+    int i = -1;
     int dominoes = 1;
-    while(2*curr < last and i < middle.size()){
-        if(middle[i] > 2*curr and i > 0){
-            curr = middle[i-1];
-            dominoes++;
-        }
-        i++;
+    bool changed = true;
+    while(2*curr < last and changed and !middle.empty()){
+        int target = upper_bound(middle.begin(), middle.end(), 2*curr) - middle.begin();
+        target--;
+        if (target == i) changed = false;
+        i = target;
+        dominoes++;
+        curr = middle[target];
     }
 
     if(2*curr < last){
         cout << -1 << endl;
     }
     else{
-        cout << i +1 << endl;
+        cout << dominoes +1 << endl;
     }
 
 
@@ -56,4 +58,6 @@ int main(){
     while(t--){
         solve();
     }
+
+    return 0;
 }
