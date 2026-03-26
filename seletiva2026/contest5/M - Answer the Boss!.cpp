@@ -1,69 +1,52 @@
 /*link*/
 
 #include <bits/stdc++.h>
-using namespace std;
 #define endl '\n'
 #define ll long long int
 #define MAXN 1000000000000000000
 
-int n, r;
-vector<bool> visited(10000, false);
-
-int get_rank(int u, vector<vector<int>> &graph, vector<int> &dp){
-    if(visited[u]) return max(1, dp[u]);
-    if(dp[u] != -1) return dp[u];
-    visited[u] = true;
-    // if(graph[u].size() == 0) return dp[u] = 1;
-
-    int rank = 1;
-    for(auto i : graph[u]){
-        if(1 + get_rank(i, graph, dp) > rank) rank = 1 + get_rank(i, graph, dp);
+using namespace std;
+int get_rank(int n, vector<int> &rank, vector<vector<int>> &relations){
+    if(rank[n] != -1) return rank[n];
+    
+    rank[n] = 1;
+    for(auto i : relations[n]){
+        rank[n] = max(rank[n], 1 + get_rank(i, rank, relations));
     }
 
-    return dp[u] = rank;
+    return rank[n];
 }
 
 int solve(){
-
-    cin >> n >> r;
-    vector<vector<int>> graph(n);
-    vector<int> dp(n, -1);
-    for(int i = 0; i < r; i++){
+    int n, m; cin >> n >> m;
+    vector<int> rank(n, -1);
+    vector<vector<int>> relations(n);
+    for(int i = 0; i < m; i++){
         int a, b; cin >> a >> b;
-        graph[a].push_back(b);
+        relations[a].push_back(b);
     }
-
-    for(int i = 0; i < n; i++){
-        get_rank(i, graph, dp);
+    map<int, set<int>> rank_person; 
+    set<int> ranks;
+    for(int i = 0; i < n; i++) {
+        int new_rank = get_rank(i, rank, relations);
+        rank_person[new_rank].insert(i);
+        ranks.insert(new_rank);
     }
-
-    vector<set<int>> ranks(10000);
-    int max_rank = 1;
-    for(int i = 0; i < n; i++){
-        ranks[get_rank(i, graph, dp)].insert(i);
-        if(get_rank(i, graph, dp) > max_rank) max_rank = get_rank(i, graph, dp);
-    }
-
-    for(int i = 1; i <= max_rank; i++){
-        for(auto a : ranks[i]){
-            cout << i << " ";
-            cout << a << " ";
-            cout << endl;
+    for(auto i : ranks){
+        for (auto j : rank_person[i]){
+            cout << i << " " << j << endl;
         }
     }
-
     return 0;
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(0);
-
-    int i = 1;
-    int t = 1; cin >> t;
-    while(t--){
-        cout << "Scenario #"<<i<< ":" << endl;
+    
+    int t; cin >> t;
+    for(int i = 0; i < t; i++){
+        cout << "Scenario " << "#" << i+1 << ":" << endl;
         solve();
-        i++;
     }
 }
