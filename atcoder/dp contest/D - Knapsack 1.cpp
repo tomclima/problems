@@ -5,26 +5,26 @@ using namespace std;
 #define endl '\n'
 #define ll long long int
 #define MAXN 1000000000000000000
-#define pii pair<int, int>
+#define pii pair<ll, ll>
 
-int recurse(int n, int w, vector<vector<int>> &dp, vector<pii> &obj){
+ll recurse(int n, int w, vector<vector<ll>> &dp, vector<pii> &obj){
     if(w <= 0) return 0;
     if(n < 0) return 0;
     if(dp[n][w] != -1) return dp[n][w];
 
-    dp[n][w] = max(recurse(n-1, w, dp, obj), recurse(n-1, w-obj[n].second, dp, obj) + obj[n].first);
+    dp[n][w] = max(recurse(n-1, w, dp, obj), (w- obj[n].first >= 0) ? recurse(n-1, w-obj[n].first, dp, obj) + obj[n].second : 0);
     return dp[n][w];
 }
 
 int solve(){
-    int n, w; cin >> n >> w;
+    ll n, w; cin >> n >> w;
     vector<pii> objects(n);
     for(int i = 0; i < n; i++){
         int a, b; cin >> a >> b;
         objects[i] = {a, b};
     }
 
-    vector<vector<int>> dp(n, vector<int> (w+1, 0));
+    vector<vector<ll>> dp(n, vector<ll> (w+1, -1));
 
     cout << recurse(n-1, w, dp, objects) << endl;
 
