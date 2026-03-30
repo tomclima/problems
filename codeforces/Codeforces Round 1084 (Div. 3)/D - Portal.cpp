@@ -10,6 +10,9 @@ using namespace std;
 1
 5 1 3
 1 3 5 2 4
+
+insight: se liberte do statement
+
 */
 
 int solve(){
