@@ -10,28 +10,27 @@ using namespace std;
  you have to build it backwards because of the stack overflow
 */
 
-bool is_losing(int k, vector<int> &options, vector<int> &dp){
-    stack<int> stk;
-    stk.push(k);
-    vector<bool> 
-    while(!stk.empty()){
-        if(dp[k] != 0){
-            stk.pop();
-            continue;
-        }
-        if(k < options[0]) dp[k] = 1;
-        
-    }
-}
+
 
 int solve(){
     int n, k; cin >> n >> k;
     vector<int> stones(n);
     for(auto &i : stones) cin >> i;
 
-    vector<int> dp(k, -1);
+    sort(stones.begin(), stones.end());
 
-    bool first_loses = is_losing(k, stones, dp);
+    vector<int> dp(k+1, 0);
+    for(int i = 0; i < min(stones[0], k+1); i++) dp[i] = 1;
+    for(int i = stones[0]+1; i <= k; i++){
+        for (auto stone :stones) {
+            if(i - stone < 0) break;
+            dp[i] |= dp[i-stone];
+        }
+        dp[i] = !dp[i];
+    }
+
+
+    bool first_loses = dp[k];
     if(first_loses) cout << "Second" << endl;
     else cout << "First" << endl;
     return 0;
