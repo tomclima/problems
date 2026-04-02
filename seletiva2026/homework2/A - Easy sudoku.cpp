@@ -57,11 +57,6 @@ bool backtrack(int i, int j){
             cols[j][val] = 1;
             squares[grid_index(i, j)][val] = 1;
             sudoku[i][j] = val;
-            // // DEBUG PRINT AAAAAAAAAAAAAAAAAAAAAAA
-            // cout << i << " " << j << " " << val << endl;
-            // print_sudoku();
-            // cout << endl;
-            // // DEBUG PRINT AAAAAAAAAAAAAAAAAAAA
             
 
             if (backtrack(i, j+1)) return true;
