@@ -10,41 +10,21 @@ int solve(){
     int n; cin >> n;
     vector<int> p(n), a(n);
     for(auto &i : p) cin >> i;
-    for(auto &i : a) cin >> i;
-    
-    vector<int> ans = p;
-    for(int i = 0; i < n-1; i++){
-        if(p[i] == a[i+1]){
-            ans[i+1] = p[i];
-        } 
-        
-    }
-    for(int i = n-1; i > 0; i--){
-        if(p[i] == a[i-1]) {
-            ans[i-1] = p[i];
-        }
+    for(auto &i : a) {cin >> i;}
+
+    vector<int> order_a{a[0]};
+    for(int i = 1; i < n; i++){
+        if(a[i] != a[i-1]) order_a.push_back(a[i]);
     }
 
-    for(int i = 0; i < n-1; i++){
-        if(ans[i] == a[i+1]){
-            ans[i+1] = ans[i];
-        }
-    }
-    for(int i = n-1; i > 0; i--){
-        if(ans[i] == a[i-1]){
-            ans[i-1] = ans[i];
-        }
-
-    }
-
-    int equal = true;
+    int j = 0;
     for(int i = 0; i < n; i++){
-        if(ans[i] != a[i]) equal = false;
+        if(p[i] == order_a[j]) j++;
     }
-
-    if (equal) cout << "YES" << endl;
-    else cout << "NO" << endl;
-
+    if(j < order_a.size()){
+        cout << "NO" << endl;
+    }
+    else cout << "YES" << endl;
     return 0;
 }
 

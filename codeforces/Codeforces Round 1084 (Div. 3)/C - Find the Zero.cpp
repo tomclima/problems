@@ -8,24 +8,31 @@ using namespace std;
 
 int solve(){
     int n; cin >> n;
-    int i = 1;
-
-    int original = 2*n;
-
-    bool found = false;
-    while(!found and n--){
-        cout << "? " << i << " " << i+1 << endl; 
-        bool result; cin >> result;
-        found = result;
-        i++;
+    int result = -1;
+    for(int i = 1; i < n; i++){
+        cout << "? " << 2*i +1<< " " << 2*i +2 << endl;
+        int ans; cin >> ans;
+        if(ans == 1) result = 2*i+1;
+        if (result != -1){
+            cout << "! " << result << endl;
+            return 0;
+        }
     }
-    if (!found){
-        cout << "!" << " " << original << endl;
-    }
-    else{
-        cout << "! " << i << endl;
-    }
+    if(result == -1){
+        cout << "? " << 1 << " " << 3 << endl;
+        int ans; cin >> ans;
+        if(ans == 1) result = 1;
+        cout << "? " << 1 << " " << 4 << endl;
+        cin >> ans;
+        if(ans == 1) result = 1;
 
+        if(result == -1){
+            cout << "! " << 2 << endl;
+        }
+        else{
+            cout << "! " << result << endl;
+        }
+    }
     return 0;
 }
 
