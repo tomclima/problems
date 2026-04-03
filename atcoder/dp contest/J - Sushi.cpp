@@ -38,6 +38,10 @@ using namespace std;
     +...
     = 2
 
+    power series errada :(((( 
+
+    the notes are part of the statement
+
     é o "tempo" que um estado passa em uma auto transição!!!!! yipeeee
 
     como generalizar? ele pode ter múltiplas auto transições
@@ -61,8 +65,10 @@ struct State{
     State() : n1(0), n2(0), n3(0) {};
     State(const int &n1, const int &n2, const int &n3) : n1(n1), n2(n2), n3(n3) {};
     
-    bool operator<(const State &s1){
-        return n1 < s1.n1;
+    bool operator<(const State &s) const {
+        if(n1 != s.n1) return n1 < s.n1;
+        if(n2 != s.n2) return n2 < s.n2;
+        return n3 < s.n3;
     }
     bool operator==(const State &s) {
         return s.n1 == n1 and s.n2 == n2 and s.n3 == n3;
@@ -70,15 +76,77 @@ struct State{
     bool operator!=(const State &s){
         return !(operator==(s));
     }
+
+    int sum_plates() const{
+        return n1 + n2 + n3;
+    }
+
+    int sum_sushi() const{
+        return n1 + 2*n2 + 3*n3;
+    }
 };
 
 
-pll recurse(State s, const State &s_max, map<State, pll> dp){
-    if(dp.find(s) != dp.end()) return dp[s];
-    if(s == s_max) return dp[s] = {0, 1};
+pll get_dp(State s, vector<vector<vector<pll>>> &dp){
+    return dp[s.n1][s.n2][s.n3];
+}
 
-    dp[s] = {0, 1};
+pll set_dp(State s, pll p, vector<vector<vector<pll>>> &dp){
+    return dp[s.n1][s.n2][s.n3] = p;
+}
+
+pll recurse(State s, const State &s_max, vector<vector<vector<pll>>> &dp){
     
+    if(s.n1 < 0 or s.n2 < 0 or s.n3 < 0) return {0, 0};
+    if(s.sum_sushi() > s_max.sum_sushi() or s.sum_plates() > s_max.sum_plates()) return {0, 0};
+    if(get_dp(s, dp) != make_pair((ld)0, (ld)0)) return get_dp(s, dp);
+
+
+    ld n = max(s.sum_plates(), 1);
+    ld n_max = s_max.sum_plates(); 
+    ld expected = n_max/n;
+    if(s.sum_plates() == 0) expected = 0;    
+
+    
+    set_dp(s, {expected, 0}, dp);
+    State p1, p2, p3;
+    p1 = s; p2 = s; p3 = s;
+    p1.n1++;
+    p2.n1--; p2.n2++;
+    p3.n2--; p3.n3++;
+    
+    int i = 1;
+
+    ld added_throws = 0;
+    ld chance = 0;
+    for(auto state : {p1, p2, p3}){
+        int n = state.sum_plates();
+        
+        pll state_dp = recurse(state, s_max, dp);
+        if(state_dp.second <= 0){
+            i++;
+            continue;
+        } 
+        if(i == 1){
+            added_throws += state_dp.first*state_dp.second*(state.n1)/n;
+            chance += state_dp.second*(state.n1)/n;
+        }
+        else if(i == 2){
+            added_throws += state_dp.first*state_dp.second*(state.n2)/n;
+            chance += state_dp.second*(state.n2)/n;
+        }
+        else{
+            added_throws += state_dp.first*state_dp.second*(state.n3)/n;
+            chance += state_dp.second*(state.n3)/n;
+        }
+        i++;
+    }
+
+    if(chance == 0) return {0,0};
+    added_throws /= chance;
+    set_dp(s, {get_dp(s, dp).first + added_throws, chance}, dp);
+    
+    return get_dp(s, dp);
 
 }
 
@@ -94,10 +162,11 @@ int solve(){
     }
 
 
-    map<State, pll> dp;
-    dp[initial_state] = {0, 1};
-    State curr_state = initial_state;
+    vector<vector<vector<pll>>> dp(n+1, vector<vector<pll>> (n+1, vector<pll> (n+1, {0,0})));
+    set_dp(initial_state, {1,1}, dp);
+
     State final_state(0, 0, 0);
+    cout << setprecision(12) << fixed << recurse(final_state, initial_state, dp).first;
     
     return 0;
 }
