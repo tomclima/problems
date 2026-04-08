@@ -10,20 +10,6 @@ vector<ll> pref;
 
 ll mod = (ll)1000000000+7;
 
-ll recurse(int n, int k, vector<ll> &a, vector<vector<ll>> &dp){
-    if(n < 0) return 0;
-    if(k <= 0) return 0;
-    if(k > pref[n+1]) return dp[n][k] = 0;
-    if(n == 0) return dp[n][k] = 1;
-    if(dp[n][k] != -1) return dp[n][k];
-
-    dp[n][k] = recurse(n-1, k, a, dp);
-    for(int i = 1; i <= a[n]; i++){
-        dp[n][k] = (dp[n][k] + recurse(n-1, k-i, a, dp)) % mod;
-    }
-
-    return dp[n][k];
-}
 
 int solve(){
     int n, k; cin >> n >> k;
@@ -38,8 +24,21 @@ int solve(){
     for(auto i : a){
         pref.push_back(pref.back() + i);
     }
-    vector<vector<ll>> dp(n, vector<ll> (k+1, -1));
-    cout << recurse(n-1, k, a, dp) << endl;
+    vector<vector<ll>> dp(n+1, vector<ll> (k+1, 0));
+    vector<vector<ll>> prefix(n+1, vector<ll> (k+2, 1));
+
+    for(int i = 0; i <=n; i++){
+        dp[i][0] = 1;
+        prefix[i][0] = 0;
+    }
+    for(int i = 1; i <= n; i++){
+        for(int j = 1; j<= k; j++){
+            dp[i][j] = (((prefix[i-1][j+1] - prefix[i-1][j-min((ll)j, a[i-1])]) % mod) + mod) % mod;
+            prefix[i][j+1] = (prefix[i][j] + dp[i][j]) % mod;
+        }
+    }
+
+    cout << dp[n][k] << endl;
 
     return 0;
 }
