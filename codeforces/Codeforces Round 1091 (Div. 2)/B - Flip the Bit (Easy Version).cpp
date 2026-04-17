@@ -7,43 +7,36 @@ using namespace std;
 #define MAXN 1000000000000000000
 
 int solve(){
-    int n, k; cin >> n >> k;
+    int n, l, k; cin >> n >> l;
     vector<int> a(n);
     for(auto &i : a) cin >> i;
-    cin >> k;
 
-    int target = a[k-1];
+    cin >>k;
     int i = k-1;
     int j = k-1;
+    int curr = a[k-1];
+    int p = curr;
     int cnt = 0;
+    bool found_diff = false;
     while(i >= 0 or j <n){
-        if(i >= 0 and a[i] == a[k-1]){
+        while(i >= 0 and a[i] == curr){
             i--;
         }
-        if(j < n and a[j] == a[k-1]){
+        if(i >= 0) found_diff = true;
+        while(j < n  and a[j] == curr){
             j++;
         }
-        if((a[i] != a[k-1] or i < 0) and (a[j] != a[k-1] or j >= n)){
-            if(!(i-1 >= 0 and a[i-1] != a[k-1]) and !(j + 1 < n and a[j+1] != a[k-1])){
-                if(i -1 >= 0 or j+1 < n){
-                    cnt++;
-                    a[k-1] = !a[k-1];
-                    j++;
-                    i--;
-                }
-            }
-            if((a[j+1] != a[k-1])){
-                j++;
-            }
-            if(a[i-1] != a[k-1]){
-                i--;
-            }
-            
+        if(j < n) found_diff = true;
+        if(found_diff){
+            curr = !curr;
+            cnt++;
         }
+        i--;
+        j++;
+        found_diff = false;
     }
 
-    if(a[k-1] != target) cnt++;
-
+    if (curr != p) cnt++;
     cout << cnt << endl;
 
     return 0;
@@ -57,4 +50,6 @@ int main(){
     while(t--){
         solve();
     }
+
+    return 0;
 }
