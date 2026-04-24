@@ -8,7 +8,6 @@ using namespace std;
 #define ld long double
 #define pll pair<ld, ld>
 
-// TODO: solve this https://atcoder.jp/contests/dp/tasks/dp_j
 /*
     dp idea: dp com estados de tres dimensões (n1, n2, n3) onde ni representa o número
     de pratos com i peças de sushi e dp(n1, n2, n3) é o custo médio de se chegar em (n1, n2, n3)
