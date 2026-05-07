@@ -7,40 +7,36 @@ using namespace std;
 #define MAXN 1000000000000000000LL
 #define pll pair<ll, ll>
 
+using Project = pair<pll, ll>;
+
 // TODO: do this problem
 
-ll recurse(int n, vector<ll> &dp, vector<pair<pll, ll>> &projects){
-    
-    if(n < 0) return 0;
-    if(dp[n] != -1) return dp[n];
-
-    auto [p, val] = projects[n];
-    auto [end, begin] = p;
-
-    dp[n] = recurse(n-1, dp, projects);
-    
-    // find first that ends before the start
-    int it = upper_bound(projects.begin(), projects.end(), make_pair(make_pair(begin, MAXN),MAXN)) - projects.begin();
-    it--;
-    dp[n] = max(dp[n], val + recurse(it, dp, projects));
-    return dp[n];
-    return 0;
-}
 
 int solve(){
     int n; cin >> n;
-    vector<pair<pll, ll>> projects;
+    vector<Project> projects;
     for(int i = 0; i < n; i++){
         ll a, b, c; cin >> a>> b >>c;
-        projects.push_back({{b, a}, c});
+        projects.push_back({{a, b}, c});
     }
-    projects.push_back({{0LL, 0LL}, 0LL});
     sort(projects.begin(), projects.end());
-    vector<ll> dp(n+1, -1);
-    dp[0] = 0;
     
-    ll max_val = recurse(n-1, dp, projects);
-    cout << max_val;
+    vector<ll> dp(n, 0);
+    
+    for(int i = n-1; i >= 0; i--){
+        
+        dp[i] = i + 1 < n ? dp[i+1] : 0;
+        ll end_time = projects[i].first.second;
+
+        ll candidate = projects[i].second;
+        int iter_candidate = lower_bound(projects.begin(), projects.end(), Project({make_pair(end_time+1, (ll)0), (ll)0})) - projects.begin();
+        if(iter_candidate < n){
+            candidate += dp[iter_candidate];
+        }
+        dp[i] = max(dp[i], candidate);
+    }
+    
+    cout << dp[0] << endl;
 
     return 0;
 }
