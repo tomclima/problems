@@ -5,76 +5,58 @@ using namespace std;
 #define endl '\n'
 #define ll long long int
 #define MAXN 400
+#define pll pair<ll, ll>
+
+ll MAX_DIST = 2000000000;
 
 using Edge = pair<ll, int>;
-
-using RefillNode = pair<ll, pair<ll, int>>; // (refills, (gas, node))
-
-vector<int> djikstra(int src, int max_gas, vector<vector<Edge>> &g){
-    
-    int n = g.size();
-    vector<int> refills(n, MAXN);
-    vector<int> curr_gas(n, 0);
-    priority_queue<RefillNode, vector<RefillNode>, greater<RefillNode>> queue;
-
-    curr_gas[src] = max_gas;
-    refills[src] = 0;
-    queue.push(RefillNode({0, {max_gas, src}}));
-
-    while(!queue.empty()){
-        
-        RefillNode curr = queue.top();
-        int v = curr.second.second;
-        int gas = curr.second.first;
-        int ref = curr.first;
-
-
-        queue.pop();
-
-        if(ref > refills[v] or (ref == refills[v] and gas < curr_gas[v])){
-            continue;
-        }
-
-        for(auto [d, w] : g[v]){
-            
-            if(ref < refills[w] or (ref==refills[w] and gas - d > curr_gas[w])){
-                if(d <= gas){
-                    refills[w] = ref;
-                    curr_gas[w] = gas - d;
-                    RefillNode next({ref, {gas - d, w}});
-                    queue.push(next);
-                }
-                else if(d <= max_gas and (ref + 1 < refills[w] or (ref +1 == refills[w] and max_gas -d > curr_gas[w]))){
-                    refills[w] = ref+1;
-                    curr_gas[w] = max_gas - d;
-                    RefillNode next({ref+1, {max_gas -d, w}});
-                    queue.push(next);
-                }
-            }
-        }
-    }
-
-    return refills;
-}
 
 int solve(){
     int n, m; cin >> n >> m;
     ll tank; cin >> tank;
 
 
-    vector<vector<Edge>> graph(n);
+    vector<vector<ll>> graph(n, vector<ll> (n, MAX_DIST));
+    for(int i = 0; i < n; i++){
+        graph[i][i] = 0;
+    }
+
     for(int i = 0; i < m; i++){
         int a, b; cin >> a >> b;
         ll c; cin >> c;
-        graph[a-1].push_back({c, b-1});
-        graph[b-1].push_back({c, a-1});
+        graph[a-1][b-1]  = c;
+        graph[b-1][a-1] = c;
+    }
+    
+
+    vector<vector<ll>> mindist;
+    mindist = graph;
+
+    for(int k = 0; k < n; k++){
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                mindist[i][j] = min(mindist[i][j], mindist[i][k] + mindist[k][j]);
+                mindist[j][i] = mindist[i][j];
+            }
+        }
     }
 
-
-    vector<vector<int>> all_refills;
+    vector<vector<ll>> all_refills(n, vector<ll> (n, MAXN));    
     for(int i = 0; i < n; i++){
-        all_refills.push_back(djikstra(i, tank, graph));
+        for(int j = 0; j < n; j++){
+            if(mindist[i][j] <= tank) all_refills[i][j] = 0;
+            all_refills[j][i] = all_refills[i][j];
+        }
     }
+
+    for(int k = 0; k < n; k++){
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                all_refills[i][j] = min(all_refills[i][j], all_refills[i][k] + all_refills[k][j] + (mindist[i][j] > tank));
+            }
+        }
+    }
+    
 
     int q; cin >> q;
     while(q--){
