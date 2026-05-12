@@ -50,7 +50,7 @@ int solve(){
         // perform dsu
         ll cumulative = 0;
         init_dsu();
-        for(int i = 0; i < n; i++){
+        for(int i = 0; i < m; i++){
             if(used_edges[i]){
                 auto [cost, a, b] = edges[i];
                 cumulative += cost;
@@ -61,7 +61,7 @@ int solve(){
         // check if is spanning tree
         bool is_tree = 1;
         for(int i = 0; i < n-1 and is_tree; i++){
-            if(pai[i] != pai[i+1]) is_tree = false; 
+            if(find(i) != find(i+1)) is_tree = false; 
         }
 
         if(is_tree){
