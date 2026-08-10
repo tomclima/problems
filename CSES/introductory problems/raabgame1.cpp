@@ -4,62 +4,74 @@
 using namespace std;
 #define endl '\n'
 #define ll long long int
+#define MAXN 1000000000000000000
 
-vector<pair<int, int>> plays;
-
-
-bool backtrack(set<int> &cards_a, set<int> &cards_b, const int rem_a,const  int rem_b){
-    if(rem_a < 0 ) return false;
-    if(rem_b < 0) return false;
-    if(rem_a + rem_b > cards_a.size()) return false;    
-    if(rem_a == 0 and rem_b == 0 and cards_a.size() == 0){
-        return true;
-    }
-
-    bool possible = false;
-    for(auto card_a: cards_a){
-        set<int> newcardsa(cards_a);
-        newcardsa.erase(card_a);
-        for(auto card_b : cards_b){
-            set<int> newcardsb(cards_b);
-            newcardsb.erase(card_b);
-            possible = backtrack(newcardsa, newcardsb, rem_a - (card_a > card_b), rem_b - (card_b > card_a));
-            if(possible) {
-                plays.push_back({card_a, card_b});
-                return true;
-            }
-
-        }
-    }
+int solve(){
     
-    return false;
+
+    int n; cin >> n;
+    int a, b; cin >> a >> b;
+
+    int draws = n - (a + b);
+
+    bool is_possible = true;
+    if (n < a + b) {
+        cout << "NO" << endl;
+        return 0;
+    }
+
+    vector<pair<int, int>> games;
+    for(int i = 0; i < draws; i++){
+        games.push_back({n - i, n-i});
+    }
+
+    vector<int> deck_a;
+    vector<int> deck_b;
+    for(int i =0; i < a + b; i++){
+        deck_a.push_back(i + 1);
+
+        deck_b.push_back(i+1);
+    }
+
+    
+
+    rotate(deck_b.begin(), deck_b.end() - b, deck_b.end());
+    for(int i = 0; i < a+b; i++){
+        games.push_back({deck_a[i], deck_b[i]});
+    }
+    int actual_a = 0;
+    int actual_b = 0;
+    // check correctness
+    for(int i = 0; i < a + b; i++){
+        actual_a += deck_a[i] > deck_b[i];
+        actual_b += deck_b[i] > deck_a[i];
+    }
+    if(actual_a != a or actual_b != b){
+        cout << "NO" << endl;
+        return 0;
+    }
+
+    cout << "YES" << endl;
+    for(int i =0; i < n; i++){
+        cout << games[i].first << " ";
+    
+    }
+    cout << endl;
+    for(int i = 0; i < n; i++){
+        cout << games[i].second << " ";
+    }
+    cout << endl;
+
+    return 0;
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(0);
+    //freopen(usaco.in, "r", stdin); freopen(usaco.out, "w", stdout);
 
-    int t;
-    cin >> t;
-
+    int t = 1;  cin >> t;
     while(t--){
-        int n, a, b; cin >> n >> a >> b;
-        set<int> cards_a, cards_b;
-        for(int i = 1; i <= n; i++) {cards_a.insert(i), cards_b.insert(i);}
-        bool possible =backtrack(cards_a, cards_b, a, b);
-        if(possible){
-            cout << "YES" << endl;
-            for(int i = 0; i < plays.size(); i++) cout << plays[i].first << " ";
-            cout << endl;
-            for(int i = 0; i < plays.size(); i++) cout << plays[i].second << " ";
-            plays.resize(0);
-            cout << endl;
-        }
-        else{
-            cout << "NO" << endl;
-        }
-        
+        solve();
     }
-
-
 }
