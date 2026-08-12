@@ -1,48 +1,119 @@
+/*link*/
 
-template<typename T> struct SegTree {
-	vector<T> seg;
-	int N;
-	T NEUTRO = T(0);
-	SegTree(int n) : N(n) { seg.assign(4*n, NEUTRO); }
-	SegTree(vector<T> &lista) : N(lista.size()) { seg.assign(4*N); build(1, 0, N-1, lista); }
-	T join(T lv, T rv){ return lv + rv; }
-		
-	T query(int no, int l, int r, int a, int b){
-		if(b <  l || r <  a) return NEUTRO;
-		if(a <= l && r <= b) return seg[no];
-		int m=(l+r)/2, e=no*2, d=e+1;
-		
-		return join(query(e, l, m, a, b), query(d, m+1, r, a, b));
-	}
-	void update(int no, int l, int r, int pos, T v){
-		if(pos < l || r < pos) return;
-		if(l == r){ seg[no] = v; return; }  // set value -> change to += if sum
-		int m=(l+r)/2, e=no*2, d=e+1;
+#include <bits/stdc++.h>
+using namespace std;
+#define endl '\n'
+#define ll long long int
+#define MAXN 1000000000000000000
 
-		update(e, l,   m, pos, v);
-		update(d, m+1, r, pos, v);
+template<typename T>
+class segTree{
+     
+    public:
+        vector<T> seg;
+        int n;
+        vector<T> a;
 
-		seg[no] = join(seg[e], seg[d]);
-	}
-	void build(int no, int l, int r, vector<T> &lista){
-		if(l == r){ seg[no] = lista[l]; return; }
-		int m=(l+r)/2, e=no*2, d=e+1;
-		build(e, l,   m, lista);
-		build(d, m+1, r, lista);
-		seg[no] = join(seg[e], seg[d]);
-	}
+        segTree(const vector<T> &arr){
+            a = arr;
+            seg.resize(4*a.size());
+            n = a.size();
+            build()
+        }
+        
+        T query(const int L, const int R){
+            return query_helper(L, R);
+        }
+        
+        void update(){
+            update_helper()
+        }
+        private:
 
-	T query(int ls, int rs){ return query (1, 0, N-1, ls, rs); }
-	void update(int pos, T v){      update(1, 0, N-1, pos, v); }
-};
+        /*
+        ------------------------------------------
+        -------ATENTION----------------------
+        ----------------------------------
+        THIS CHANGES ACCORDING TO THE PROBLEM AND DATATYPE
+        */
+        void join(T a, T b){
+            return a+b;
+        }
+    
+        void neutral(){
+            return 0;
+        }
+        
+        /*
+        
+        THIS REMAINS MOSTLY THE SAME
+        */
+        
+        void build(int l = 0, int r = n-1, int idx = 0){
+            
+            // if current node is a leaf
+            if (l == r){
+                seg[idx] = a[l];
 
-/*LATEX_IGNORED_BEGIN************************
--> Segment Tree com:
-	- Query em Range
-	- Update em Ponto
-	- Closed interval & 0-indexed: [L, R] & [0, N-1]
-Build:  O(N)
-Query:  O(log N) | seg.query(l, r);
-Update: O(log N) | seg.update(i, v);
-**Update Join, NEUTRO and Update if needed**
-***************************LATEX_IGNORED_END*/
+                return;
+            }
+            
+            int mid = (l + r)/2;
+            // build left child
+            build(l, mid, 2*idx + 1);
+            // build right child
+            build(mid+1, r,2*idx + 2);
+
+            // build node
+            seg[idx] = join(seg[2*idx+1], join(2*idx+2));
+        }
+
+        
+        
+        T query_helper(int L, int R, int l = 0, int r=n-1, int idx=0){
+            
+            // If outside range, return neutral element
+            if(r < L || l > R) return neutral();
+            
+            // If wholly inside range, return node value
+            if(l >= L && r <= R) return seg[idx];
+            
+            // else, join left and right queries
+            int mid = (l + r)/2;
+            
+            return join(query(L, R, l, mid+1, 2*idx+1), query(L, R, mid+1, r, 2*idx+2));   
+        }
+        
+        void update_helper(int I, T VAL, int l=0, int r = n-1, int idx=0){
+            
+            // If node is the leaf itself
+            if (l == r){
+                seg[idx] = VAL;
+                return;
+            }
+            
+            // otherwise, update left or right nodes
+            int mid = (l + r)/2;
+            
+            // update left or right node 
+            if(i <= mid) update(I, VAL, l, mid+1, 2*idx+1)
+            else update(I, VAL, mid+1, r, 2*idx+2);
+            
+            // update node
+            seg[idx] = join(seg[2*idx+1], seg[2*idx+2]);
+            
+        }
+        
+        
+    };
+    
+    
+    
+
+
+int main(){
+
+
+
+    return 0;
+}
