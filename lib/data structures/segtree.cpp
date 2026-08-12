@@ -6,109 +6,99 @@ using namespace std;
 #define ll long long int
 #define MAXN 1000000000000000000
 
-template<typename T>
+template <typename T>
 class segTree{
-     
     public:
         vector<T> seg;
-        int n;
         vector<T> a;
+        int n;
 
-        segTree(const vector<T> &arr){
+        segTree(vector<T> arr){
             a = arr;
             seg.resize(4*a.size());
             n = a.size();
-            build()
+            build_tree();
         }
-        
-        T query(const int L, const int R){
-            return query_helper(L, R);
+
+        T query(int L, int R){
+            return make_query(L, R);
         }
-        
-        void update(){
+
+        void update(int i, T val){
+            update_tree(i, val);
+        }
+
+    private:
+
+        void update_tree(int i, T val){
             update_helper()
         }
-        private:
 
-        /*
-        ------------------------------------------
-        -------ATENTION----------------------
-        ----------------------------------
-        THIS CHANGES ACCORDING TO THE PROBLEM AND DATATYPE
-        */
-        void join(T a, T b){
-            return a+b;
+        void update_helper(int i, T val, int l, int r, int idx){
+            
+            if(l == r){
+                seg[idx] = val;
+                return;
+            }
+
+            int mid = (l + r)/2;
+            int left_child = 2*idx+1;
+            int right_child = 2*idx+2;
+
+            if(i <= mid) update_helper(i, val, l, mid, 2*idx+1);
+            else update_helper(i, val, mid+1, r, right_child);
+
+            seg[idx] = join(seg[left_child], seg[right_child]);
         }
-    
-        void neutral(){
+
+        void build_tree(){
+            build(0, n -1, 0);
+        }
+
+        T make_query(int L, int R){
+            return query_helper(L, R, 0, n-1, 0);
+        }
+
+        void build(int l, int r, int idx){
+            
+            if(l == r){
+                seg[idx] = a[l];
+                return;
+            }
+            
+            int mid = (l + r)/2;
+
+            int left_child = 2*idx+1;
+            int right_child = 2*idx+2;
+
+            build(l, mid, left_child);
+            build(mid+1, r, right_child);
+            seg[idx] = join(seg[left_child], seg[right_child]);
+        }
+
+        T query_helper(int L, int R, int l, int r, int idx){
+            
+            if(r < L || l > R) return neutral();
+
+            if(l >= L && r <= R) return seg[idx];
+
+            int mid = (l + r)/2;
+            int left_child = 2*idx+1;
+            int right_child = 2*idx+2;
+
+            return join(query_helper(L, R, l, mid, left_child),query_helper(L, R, mid+1, r, right_child));
+        }
+
+        T join(T a, T b){
+            return a + b;
+        }
+
+        T neutral(){
             return 0;
         }
-        
-        /*
-        
-        THIS REMAINS MOSTLY THE SAME
-        */
-        
-        void build(int l = 0, int r = n-1, int idx = 0){
-            
-            // if current node is a leaf
-            if (l == r){
-                seg[idx] = a[l];
 
-                return;
-            }
-            
-            int mid = (l + r)/2;
-            // build left child
-            build(l, mid, 2*idx + 1);
-            // build right child
-            build(mid+1, r,2*idx + 2);
-
-            // build node
-            seg[idx] = join(seg[2*idx+1], join(2*idx+2));
-        }
-
-        
-        
-        T query_helper(int L, int R, int l = 0, int r=n-1, int idx=0){
-            
-            // If outside range, return neutral element
-            if(r < L || l > R) return neutral();
-            
-            // If wholly inside range, return node value
-            if(l >= L && r <= R) return seg[idx];
-            
-            // else, join left and right queries
-            int mid = (l + r)/2;
-            
-            return join(query(L, R, l, mid+1, 2*idx+1), query(L, R, mid+1, r, 2*idx+2));   
-        }
-        
-        void update_helper(int I, T VAL, int l=0, int r = n-1, int idx=0){
-            
-            // If node is the leaf itself
-            if (l == r){
-                seg[idx] = VAL;
-                return;
-            }
-            
-            // otherwise, update left or right nodes
-            int mid = (l + r)/2;
-            
-            // update left or right node 
-            if(i <= mid) update(I, VAL, l, mid+1, 2*idx+1)
-            else update(I, VAL, mid+1, r, 2*idx+2);
-            
-            // update node
-            seg[idx] = join(seg[2*idx+1], seg[2*idx+2]);
-            
-        }
-        
-        
     };
-    
-    
-    
+
 
 
 int main(){
