@@ -65,8 +65,4 @@ g++ -std=c++17 -O2 -Wall arquivo.cpp -o main
 ./main < input.txt
 ```
 
-## Escopo
 
-Participei de contests internos de seleção em 2023, 2025 e 2026, e resolvo problemas de juízes
-online (Codeforces, CSES, AtCoder, UVa). Não competi em ICPC ou Maratona SBC — o objetivo aqui é
-manter o hábito de resolver problema difícil sob restrição de tempo, que é o que a maratona treina.
